@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 
-
+import Cocoa
 from playwright.async_api import Page
 
 from mlx_use.agent.views import ActionModel, ActionResult
@@ -36,10 +36,30 @@ class Controller:
 
 	def _register_default_actions(self):
 		"""Register all default browser actions"""
-		self.registry.action('Click element', param_model=ClickElementAction, requires_browser=True)
 
-		async def click_element(index: int, browser: BrowserContext):
+		@self.registry.action('Click element')
+		async def click_element(index: int):
 			return 'done'
+
+		@self.registry.action(
+			'Open a mac app',
+		)
+		async def open_app(app_name: str):
+			workspace = Cocoa.NSWorkspace.sharedWorkspace()
+			print(f'\nLaunching {app_name} app...')
+			success = workspace.launchApplication_(app_name)
+			if not success:
+				print(f'❌ Failed to launch {app_name} app\n ending with {success}')
+				return
+			# Find Calculator app
+			await asyncio.sleep(1)  # Give it a moment to appear in running apps
+			for app in workspace.runningApplications():
+				if app.bundleIdentifier() and app_name in app.bundleIdentifier().lower():
+					print(f'Bundle ID: {app.bundleIdentifier()}')
+					print(f'PID: {app.processIdentifier()}')
+					break
+
+			return f'We opened the app {app_name}'
 
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions

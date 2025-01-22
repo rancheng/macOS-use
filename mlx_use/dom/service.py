@@ -38,7 +38,7 @@ class DomService:
 		focus_element: int,
 		viewport_expansion: int,
 	) -> DOMElementNode:
-		js_code = resources.read_text('browser_use.dom', 'buildDomTree.js')
+		js_code = resources.read_text('mlx_use.dom', 'buildDomTree.js')
 
 		args = {
 			'doHighlightElements': highlight_elements,

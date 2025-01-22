@@ -67,7 +67,7 @@ class MessageManager:
 						'memory': '',
 						'next_goal': 'Start browser',
 					},
-					'action': [],
+					'action': [{'open_app': 'calculator'}],
 				},
 				'id': str(self.tool_id),
 				'type': 'tool_call',
