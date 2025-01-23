@@ -4,7 +4,6 @@ from typing import List, Optional
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from mlx_use.agent.views import ActionResult, AgentStepInfo
-from mlx_use.browser.views import BrowserState
 
 
 class SystemPrompt:

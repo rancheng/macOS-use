@@ -4,7 +4,6 @@ from typing import Any, Callable, Optional, Type
 
 from pydantic import BaseModel, Field, create_model
 
-from mlx_use.browser.context import BrowserContext
 from mlx_use.controller.registry.views import (
 	ActionModel,
 	ActionRegistry,

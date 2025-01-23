@@ -34,15 +34,8 @@ from mlx_use.agent.views import (
 	AgentOutput,
 	AgentStepInfo,
 )
-from mlx_use.browser.browser import Browser
-from mlx_use.browser.context import BrowserContext
-from mlx_use.browser.views import BrowserState, BrowserStateHistory
 from mlx_use.controller.registry.views import ActionModel
 from mlx_use.controller.service import Controller
-from mlx_use.dom.history_tree_processor.service import (
-	DOMHistoryElement,
-	HistoryTreeProcessor,
-)
 from mlx_use.mac.tree import MacUITreeBuilder
 from mlx_use.telemetry.service import ProductTelemetry
 from mlx_use.telemetry.views import (
@@ -63,8 +56,6 @@ class Agent:
 		self,
 		task: str,
 		llm: BaseChatModel,
-		browser: Browser | None = None,
-		browser_context: BrowserContext | None = None,
 		controller: Controller = Controller(),
 		use_vision: bool = True,
 		save_conversation_path: Optional[str] = None,
@@ -91,7 +82,7 @@ class Agent:
 		max_actions_per_step: int = 10,
 		initial_actions: Optional[List[Dict[str, Dict[str, Any]]]] = None,
 		# Cloud Callbacks
-		register_new_step_callback: Callable[['BrowserState', 'AgentOutput', int], None] | None = None,
+		register_new_step_callback: Callable[['str', 'AgentOutput', int], None] | None = None,
 		register_done_callback: Callable[['AgentHistoryList'], None] | None = None,
 		tool_calling_method: Optional[str] = 'auto',
 	):
@@ -406,7 +397,9 @@ class Agent:
 
 			# Execute initial actions if provided
 			if self.initial_actions:
-				result = await self.controller.multi_act(self.initial_actions, self.browser_context, check_for_new_elements=False)
+				result = await self.controller.multi_act(
+					self.initial_actions, self.mac_tree_builder, check_for_new_elements=False
+				)
 				self._last_result = result
 
 			for step in range(max_steps):
@@ -420,10 +413,6 @@ class Agent:
 				await self.step()
 
 				if self.history.is_done():
-					if self.validate_output and step < max_steps - 1:
-						if not await self._validate_output():
-							continue
-
 					logger.info('✅ Task completed successfully')
 					if self.register_done_callback:
 						self.register_done_callback(self.history)

@@ -10,12 +10,6 @@ from openai import RateLimitError
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, create_model
 
 from mlx_use.controller.registry.views import ActionModel
-from mlx_use.dom.history_tree_processor.service import (
-	DOMElementNode,
-	DOMHistoryElement,
-	HistoryTreeProcessor,
-)
-from mlx_use.dom.views import SelectorMap
 
 
 @dataclass
@@ -72,18 +66,6 @@ class AgentHistory(BaseModel):
 	state: str
 
 	model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
-
-	@staticmethod
-	def get_interacted_element(model_output: AgentOutput, selector_map: SelectorMap) -> list[DOMHistoryElement | None]:
-		elements = []
-		for action in model_output.action:
-			index = action.get_index()
-			if index and index in selector_map:
-				el: DOMElementNode = selector_map[index]
-				elements.append(HistoryTreeProcessor.convert_dom_element_to_history_element(el))
-			else:
-				elements.append(None)
-		return elements
 
 	def model_dump(self, **kwargs) -> Dict[str, Any]:
 		"""Custom serialization handling circular references"""

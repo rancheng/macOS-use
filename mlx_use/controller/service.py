@@ -6,7 +6,6 @@ import Cocoa
 from playwright.async_api import Page
 
 from mlx_use.agent.views import ActionModel, ActionResult
-from mlx_use.browser.context import BrowserContext
 from mlx_use.controller.registry.service import Registry
 from mlx_use.controller.views import (
 	ClickElementAction,
@@ -20,7 +19,7 @@ from mlx_use.controller.views import (
 	SendKeysAction,
 	SwitchTabAction,
 )
-from mlx_use.mac.actions import click
+from mlx_use.mac.actions import click, type_into
 from mlx_use.mac.tree import MacUITreeBuilder
 from mlx_use.utils import time_execution_async, time_execution_sync
 
@@ -42,6 +41,28 @@ class Controller:
 		@self.registry.action('Complete task with text for the user')
 		async def done(text: str):
 			return ActionResult(extracted_content=text, is_done=True)
+
+		@self.registry.action('Input text', requires_mac_builder=True)
+		async def input_text(index: int, text: str, mac_tree_builder: MacUITreeBuilder):
+			logger.info(f'Inputting text {text} into element with index {index}')
+
+			try:
+				if index in mac_tree_builder._element_cache:
+					element_to_input_text = mac_tree_builder._element_cache[index]
+					print(f'Attempting to input text: {element_to_input_text}')
+					input_successful = type_into(element_to_input_text, text)
+					if input_successful:
+						print('✅ Input successful!')
+					else:
+						print('❌ Input failed.')
+				else:
+					print('❌ Invalid index.')
+			except ValueError:
+				print("❌ Invalid input. Please enter a number or 'q'.")
+			except Exception as e:
+				print(f'❌ An error occurred: {e}')
+
+			return ActionResult(extracted_content=f'input text into element with index {index}')
 
 		@self.registry.action('Click element', requires_mac_builder=True)
 		async def click_element(index: int, mac_tree_builder: MacUITreeBuilder):

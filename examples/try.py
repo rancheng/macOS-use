@@ -9,7 +9,6 @@ import argparse
 import asyncio
 
 from mlx_use import Agent
-from mlx_use.browser.browser import Browser, BrowserConfig
 from mlx_use.controller.service import Controller
 
 llm = ChatOpenAI(model='gpt-4o', temperature=0.0)
@@ -18,9 +17,11 @@ llm = ChatOpenAI(model='gpt-4o', temperature=0.0)
 controller = Controller()
 
 
-task = 'Open the calculator app and first reset, then calculate  5 x Rand and then equals and return the result. Then call done.'
-task = 'Open chrome navigate to google filghts and search for flights from Amsterdam to New York on 1.2.2025 one wayand return the first flight.'
+task = 'Open safari navigate, type  google filghts, click first link and search there for flights from Amsterdam to New York on 1.2.2025 one wayand return the first flight.'
 
+task = 'Open notes and create new note and type in it "Hello world" and then call done.'
+
+task = 'Open the calculator app and first reset, then calculate  5 x Rand and then equals and return the result. Then call done.'
 
 agent = Agent(
 	task=task,

@@ -17,7 +17,6 @@ from langchain_openai import ChatOpenAI
 from mlx_use.agent.message_manager.views import MessageHistory, MessageMetadata
 from mlx_use.agent.prompts import AgentMessagePrompt, SystemPrompt
 from mlx_use.agent.views import ActionResult, AgentOutput, AgentStepInfo
-from mlx_use.browser.views import BrowserState
 from mlx_use.mac.element import MacElementNode
 
 logger = logging.getLogger(__name__)
