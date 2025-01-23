@@ -18,7 +18,7 @@ class SystemPrompt:
 		Returns the important rules for the agent.
 		"""
 		text = """
-Call the function open app with the app the user wants to open
+Always open first an app which the user wants. Then perform the actions the user wants.
 """
 		text += f'   - use maximum {self.max_actions_per_step} actions per sequence'
 		return text
@@ -61,7 +61,7 @@ Remember: Your responses must be valid JSON matching the specified format. Each 
 class AgentMessagePrompt:
 	def __init__(
 		self,
-		state: BrowserState,
+		state: str,
 		result: Optional[List[ActionResult]] = None,
 		include_attributes: list[str] = [],
 		max_error_length: int = 400,
@@ -79,33 +79,12 @@ class AgentMessagePrompt:
 		else:
 			step_info_description = ''
 
-		elements_text = self.state.element_tree.clickable_elements_to_string(include_attributes=self.include_attributes)
-
-		has_content_above = (self.state.pixels_above or 0) > 0
-		has_content_below = (self.state.pixels_below or 0) > 0
-
-		if elements_text != '':
-			if has_content_above:
-				elements_text = (
-					f'... {self.state.pixels_above} pixels above - scroll or extract content to see more ...\n{elements_text}'
-				)
-			else:
-				elements_text = f'[Start of page]\n{elements_text}'
-			if has_content_below:
-				elements_text = (
-					f'{elements_text}\n... {self.state.pixels_below} pixels below - scroll or extract content to see more ...'
-				)
-			else:
-				elements_text = f'{elements_text}\n[End of page]'
-		else:
-			elements_text = 'empty page'
+		elements_text = self.state
 
 		state_description = f"""
 {step_info_description}
-Current url: {self.state.url}
-Available tabs:
-{self.state.tabs}
-Interactive elements from current page view:
+
+Interactive elements from current view:
 {elements_text}
 """
 
@@ -117,17 +96,5 @@ Interactive elements from current page view:
 					# only use last 300 characters of error
 					error = result.error[-self.max_error_length :]
 					state_description += f'\nAction error {i + 1}/{len(self.result)}: ...{error}'
-
-		if self.state.screenshot:
-			# Format message for vision model
-			return HumanMessage(
-				content=[
-					{'type': 'text', 'text': state_description},
-					{
-						'type': 'image_url',
-						'image_url': {'url': f'data:image/png;base64,{self.state.screenshot}'},
-					},
-				]
-			)
 
 		return HumanMessage(content=state_description)

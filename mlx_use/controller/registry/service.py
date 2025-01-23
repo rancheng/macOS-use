@@ -10,6 +10,7 @@ from mlx_use.controller.registry.views import (
 	ActionRegistry,
 	RegisteredAction,
 )
+from mlx_use.mac.tree import MacUITreeBuilder
 from mlx_use.telemetry.service import ProductTelemetry
 from mlx_use.telemetry.views import (
 	ControllerRegisteredFunctionsTelemetryEvent,
@@ -25,13 +26,15 @@ class Registry:
 		self.telemetry = ProductTelemetry()
 		self.exclude_actions = exclude_actions
 
+		self.arguments_to_ignore = ['browser', 'mac_tree_builder', 'builder']
+
 	def _create_param_model(self, function: Callable) -> Type[BaseModel]:
 		"""Creates a Pydantic model from function signature"""
 		sig = signature(function)
 		params = {
 			name: (param.annotation, ... if param.default == param.empty else param.default)
 			for name, param in sig.parameters.items()
-			if name != 'browser'
+			if name not in self.arguments_to_ignore
 		}
 		# TODO: make the types here work
 		return create_model(
@@ -44,7 +47,7 @@ class Registry:
 		self,
 		description: str,
 		param_model: Optional[Type[BaseModel]] = None,
-		requires_browser: bool = False,
+		requires_mac_builder: bool = False,
 	):
 		"""Decorator for registering actions"""
 
@@ -75,14 +78,14 @@ class Registry:
 				description=description,
 				function=wrapped_func,
 				param_model=actual_param_model,
-				requires_browser=requires_browser,
+				requires_mac_builder=requires_mac_builder,
 			)
 			self.registry.actions[func.__name__] = action
 			return func
 
 		return decorator
 
-	async def execute_action(self, action_name: str, params: dict, browser: Optional[BrowserContext] = None) -> Any:
+	async def execute_action(self, action_name: str, params: dict, mac_tree_builder: Optional[MacUITreeBuilder] = None) -> Any:
 		"""Execute a registered action"""
 		if action_name not in self.registry.actions:
 			raise ValueError(f'Action {action_name} not found')
@@ -98,14 +101,14 @@ class Registry:
 			is_pydantic = parameters and issubclass(parameters[0].annotation, BaseModel)
 
 			# Prepare arguments based on parameter type
-			if action.requires_browser:
-				if not browser:
+			if action.requires_mac_builder:
+				if not mac_tree_builder:
 					raise ValueError(
-						f'Action {action_name} requires browser but none provided. This has to be used in combination of `requires_browser=True` when registering the action.'
+						f'Action {action_name} requires browser but none provided. This has to be used in combination of `requires_mac_builder=True` when registering the action.'
 					)
 				if is_pydantic:
-					return await action.function(validated_params, browser=browser)
-				return await action.function(**validated_params.model_dump(), browser=browser)
+					return await action.function(validated_params, mac_tree_builder=mac_tree_builder)
+				return await action.function(**validated_params.model_dump(), mac_tree_builder=mac_tree_builder)
 
 			if is_pydantic:
 				return await action.function(validated_params)

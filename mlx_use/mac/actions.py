@@ -10,7 +10,7 @@ from mlx_use.mac.element import MacElementNode
 logger = logging.getLogger(__name__)
 
 
-def click_element(element: MacElementNode) -> bool:
+def click(element: MacElementNode) -> bool:
 	"""Simulates a click on a Mac UI element."""
 	try:
 		if element._element:
@@ -29,7 +29,7 @@ def click_element(element: MacElementNode) -> bool:
 		return False
 
 
-def type_into_element(element: MacElementNode, text: str) -> bool:
+def type_into(element: MacElementNode, text: str) -> bool:
 	"""Simulates typing text into a Mac UI element."""
 	try:
 		if element._element:

@@ -20,6 +20,8 @@ from mlx_use.controller.views import (
 	SendKeysAction,
 	SwitchTabAction,
 )
+from mlx_use.mac.actions import click
+from mlx_use.mac.tree import MacUITreeBuilder
 from mlx_use.utils import time_execution_async, time_execution_sync
 
 logger = logging.getLogger(__name__)
@@ -37,15 +39,38 @@ class Controller:
 	def _register_default_actions(self):
 		"""Register all default browser actions"""
 
-		@self.registry.action('Click element')
-		async def click_element(index: int):
-			return 'done'
+		@self.registry.action('Complete task with text for the user')
+		async def done(text: str):
+			return ActionResult(extracted_content=text, is_done=True)
+
+		@self.registry.action('Click element', requires_mac_builder=True)
+		async def click_element(index: int, mac_tree_builder: MacUITreeBuilder):
+			logger.info(f'Clicking element {index}')
+
+			try:
+				if index in mac_tree_builder._element_cache:
+					element_to_click = mac_tree_builder._element_cache[index]
+					print(f'Attempting to click: {element_to_click}')
+					click_successful = click(element_to_click)
+					if click_successful:
+						print('✅ Click successful!')
+					else:
+						print('❌ Click failed.')
+				else:
+					print('❌ Invalid index.')
+			except ValueError:
+				print("❌ Invalid input. Please enter a number or 'q'.")
+			except Exception as e:
+				print(f'❌ An error occurred: {e}')
+
+			return ActionResult(extracted_content=f'clicked element with index {index}')
 
 		@self.registry.action(
-			'Open a mac app',
+			'Open a mac app always use lowercase',
 		)
 		async def open_app(app_name: str):
 			workspace = Cocoa.NSWorkspace.sharedWorkspace()
+			app_name = app_name.lower()
 			print(f'\nLaunching {app_name} app...')
 			success = workspace.launchApplication_(app_name)
 			if not success:
@@ -53,13 +78,19 @@ class Controller:
 				return
 			# Find Calculator app
 			await asyncio.sleep(1)  # Give it a moment to appear in running apps
+			pid = None
 			for app in workspace.runningApplications():
 				if app.bundleIdentifier() and app_name in app.bundleIdentifier().lower():
 					print(f'Bundle ID: {app.bundleIdentifier()}')
-					print(f'PID: {app.processIdentifier()}')
+					pid = app.processIdentifier()
+					print(f'PID: {pid}')
 					break
-
-			return f'We opened the app {app_name}'
+			if pid is None:
+				msg = f'Could not find {app_name} app in:\n {workspace.runningApplications()}'
+				print(msg)
+				return ActionResult(extracted_content=msg)
+			else:
+				return ActionResult(extracted_content=f'We opened the app {app_name}', current_app_pid=pid)
 
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions
@@ -70,44 +101,28 @@ class Controller:
 
 	@time_execution_async('--multi-act')
 	async def multi_act(
-		self, actions: list[ActionModel], browser_context: BrowserContext, check_for_new_elements: bool = True
+		self, actions: list[ActionModel], mac_tree_builder: MacUITreeBuilder, check_for_new_elements: bool = True
 	) -> list[ActionResult]:
 		"""Execute multiple actions"""
 		results = []
 
-		session = await browser_context.get_session()
-		cached_selector_map = session.cached_state.selector_map
-		cached_path_hashes = set(e.hash.branch_path_hash for e in cached_selector_map.values())
-		await browser_context.remove_highlights()
-
 		for i, action in enumerate(actions):
-			if action.get_index() is not None and i != 0:
-				new_state = await browser_context.get_state()
-				new_path_hashes = set(e.hash.branch_path_hash for e in new_state.selector_map.values())
-				if check_for_new_elements and not new_path_hashes.issubset(cached_path_hashes):
-					# next action requires index but there are new elements on the page
-					logger.info(f'Something new appeared after action {i} / {len(actions)}')
-					break
-
-			results.append(await self.act(action, browser_context))
+			results.append(await self.act(action, mac_tree_builder))
 
 			logger.debug(f'Executed action {i + 1} / {len(actions)}')
 			if results[-1].is_done or results[-1].error or i == len(actions) - 1:
 				break
 
-			await asyncio.sleep(browser_context.config.wait_between_actions)
-			# hash all elements. if it is a subset of cached_state its fine - else break (new elements on page)
-
 		return results
 
 	@time_execution_sync('--act')
-	async def act(self, action: ActionModel, browser_context: BrowserContext) -> ActionResult:
+	async def act(self, action: ActionModel, mac_tree_builder: MacUITreeBuilder) -> ActionResult:
 		"""Execute an action"""
 		try:
 			for action_name, params in action.model_dump(exclude_unset=True).items():
 				if params is not None:
 					# remove highlights
-					result = await self.registry.execute_action(action_name, params, browser=browser_context)
+					result = await self.registry.execute_action(action_name, params, mac_tree_builder=mac_tree_builder)
 					if isinstance(result, str):
 						return ActionResult(extracted_content=result)
 					elif isinstance(result, ActionResult):

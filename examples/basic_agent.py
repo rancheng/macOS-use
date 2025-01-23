@@ -8,7 +8,7 @@ import Cocoa
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import SecretStr
 
-from mlx_use.mac.actions import click_element, type_into_element
+from mlx_use.mac.actions import click, type_into
 from mlx_use.mac.tree import MacUITreeBuilder
 
 NOTES_BUNDLE_ID = 'com.apple.Notes'
@@ -206,7 +206,7 @@ Remember your goal: "Create a new folder in the notes app called 'Ofir folder'".
 					if isinstance(index_to_click, int) and index_to_click in builder._element_cache:
 						element_to_click = builder._element_cache[index_to_click]
 						print(f'Attempting to click: {element_to_click}')
-						success = click_element(element_to_click)
+						success = click(element_to_click)
 						print(f'Click successful: {success}')
 						state.update(action_name, success, str(element_to_click))
 					else:
@@ -217,7 +217,7 @@ Remember your goal: "Create a new folder in the notes app called 'Ofir folder'".
 					if isinstance(index_to_type, int) and text_to_type is not None and index_to_type in builder._element_cache:
 						element_to_type_into = builder._element_cache[index_to_type]
 						print(f"Attempting to type '{text_to_type}' into: {element_to_type_into}")
-						success = type_into_element(element_to_type_into, text_to_type)
+						success = type_into(element_to_type_into, text_to_type)
 						print(f'Typing successful: {success}')
 						state.update(action_name, success)
 					else:

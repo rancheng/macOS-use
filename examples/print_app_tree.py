@@ -6,7 +6,7 @@ from typing import Optional
 
 import Cocoa
 
-from mlx_use.mac.actions import click_element  # Import the click_element function
+from mlx_use.mac.actions import click  # Import the click_element function
 from mlx_use.mac.tree import MacUITreeBuilder
 
 
@@ -102,7 +102,7 @@ async def main():
 					if index in builder._element_cache:
 						element_to_click = builder._element_cache[index]
 						print(f'Attempting to click: {element_to_click}')
-						click_successful = click_element(element_to_click)
+						click_successful = click(element_to_click)
 						if click_successful:
 							print('✅ Click successful!')
 						else:

@@ -21,7 +21,7 @@ from ApplicationServices import (
 )
 from CoreFoundation import CFRunLoopGetCurrent
 
-from mlx_use.mac.actions import click_element, type_into_element
+from mlx_use.mac.actions import click, type_into
 from mlx_use.mac.tree import MacUITreeBuilder
 from mlx_use.mac.views import MacAppInfo, MacUIState
 
@@ -155,7 +155,7 @@ class MacAppContext:
 			return False
 
 		element = self.session.tree_builder._element_cache.get(index)
-		return click_element(element) if element else False
+		return click(element) if element else False
 
 	async def type_into_element(self, index: int, text: str) -> bool:
 		"""Type text into element by index"""
@@ -163,7 +163,7 @@ class MacAppContext:
 			return False
 
 		element = self.session.tree_builder._element_cache.get(index)
-		return type_into_element(element, text) if element else False
+		return type_into(element, text) if element else False
 
 	async def focus_window(self, window_index: int) -> bool:
 		"""Focus a specific application window"""

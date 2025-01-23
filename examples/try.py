@@ -19,7 +19,7 @@ task = 'go to reddit and search for post about brower-use '
 controller = Controller()
 
 
-task = 'open the calculator app 10 times never stop.'
+task = 'open the calculator app and click on 10 time 5 and click on equals and click .'
 
 
 agent = Agent(

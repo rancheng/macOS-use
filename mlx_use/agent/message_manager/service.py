@@ -18,6 +18,7 @@ from mlx_use.agent.message_manager.views import MessageHistory, MessageMetadata
 from mlx_use.agent.prompts import AgentMessagePrompt, SystemPrompt
 from mlx_use.agent.views import ActionResult, AgentOutput, AgentStepInfo
 from mlx_use.browser.views import BrowserState
+from mlx_use.mac.element import MacElementNode
 
 logger = logging.getLogger(__name__)
 
@@ -65,9 +66,9 @@ class MessageManager:
 					'current_state': {
 						'evaluation_previous_goal': 'Unknown - No previous actions to evaluate.',
 						'memory': '',
-						'next_goal': 'Start browser',
+						'next_goal': 'Get user task',
 					},
-					'action': [{'open_app': 'calculator'}],
+					'action': [],
 				},
 				'id': str(self.tool_id),
 				'type': 'tool_call',
@@ -93,7 +94,7 @@ class MessageManager:
 
 	def add_state_message(
 		self,
-		state: BrowserState,
+		state: str,
 		result: Optional[List[ActionResult]] = None,
 		step_info: Optional[AgentStepInfo] = None,
 	) -> None:

@@ -1,7 +1,17 @@
 # --- START OF FILE mac_use/mac/tree.py ---
 import asyncio
+
+# --- START OF FILE mac_use/mac/actions.py ---
 import logging
 from typing import Callable, Dict, List, Optional
+
+import Cocoa
+from ApplicationServices import AXUIElementPerformAction, AXUIElementSetAttributeValue, kAXPressAction, kAXValueAttribute
+from Foundation import NSString
+
+from mlx_use.mac.element import MacElementNode
+
+logger = logging.getLogger(__name__)
 
 import Cocoa
 import objc
@@ -37,6 +47,8 @@ class MacUITreeBuilder:
 		self._element_cache = {}
 		self._observers = {}
 		self._processed_elements = set()  # To avoid infinite recursion
+
+		self._current_app_pid = None
 
 	def _setup_observer(self, pid: int) -> bool:
 		"""Setup accessibility observer for an application"""
@@ -130,15 +142,22 @@ class MacUITreeBuilder:
 			print(f'Error processing element: {e}')
 			return None
 
-	async def build_tree(self, pid: int, notification_callback: Optional[Callable] = None) -> Optional[MacElementNode]:
+	async def build_tree(self, pid: Optional[int] = None) -> Optional[MacElementNode]:
 		"""Build UI tree for a specific application"""
 		try:
-			if not self._setup_observer(pid):
-				print('Failed to setup accessibility observer')
-				return None
+			if pid is None and self._current_app_pid is None:
+				print('No PID provided and no current app PID set')
+				raise ValueError('No PID provided and no current app PID set')
 
-			print(f'\nAttempting to create AX element for pid {pid}')
-			app_ref = AXUIElementCreateApplication(pid)
+			if pid is not None:
+				self._current_app_pid = pid
+
+				if not self._setup_observer(self._current_app_pid):
+					print('Failed to setup accessibility observer')
+					return None
+
+			print(f'\nAttempting to create AX element for pid {self._current_app_pid}')
+			app_ref = AXUIElementCreateApplication(self._current_app_pid)
 
 			print('Testing accessibility permissions (Role)...')
 			error, role_attr = AXUIElementCopyAttributeValue(app_ref, kAXRoleAttribute, None)
@@ -150,7 +169,13 @@ class MacUITreeBuilder:
 					print('Accessibility is not enabled. Please enable it in System Settings.')
 				return None
 
-			root = MacElementNode(role='application', identifier=str(app_ref), attributes={}, is_visible=True, app_pid=pid)
+			root = MacElementNode(
+				role='application',
+				identifier=str(app_ref),
+				attributes={},
+				is_visible=True,
+				app_pid=self._current_app_pid,
+			)
 			root._element = app_ref
 
 			# Try to get the main window
@@ -158,7 +183,7 @@ class MacUITreeBuilder:
 			error, main_window_ref = AXUIElementCopyAttributeValue(app_ref, kAXMainWindowAttribute, None)
 			if error == kAXErrorSuccess and main_window_ref:
 				print(f'✅ Found main window: ({error}, {main_window_ref})')
-				window_node = await self._process_element(main_window_ref, pid, root)
+				window_node = await self._process_element(main_window_ref, self._current_app_pid, root)
 				if window_node:
 					root.children.append(window_node)
 			else:
