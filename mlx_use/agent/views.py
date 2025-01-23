@@ -9,7 +9,6 @@ from typing import Any, Dict, Optional, Type
 from openai import RateLimitError
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, create_model
 
-from mlx_use.browser.views import BrowserStateHistory
 from mlx_use.controller.registry.views import ActionModel
 from mlx_use.dom.history_tree_processor.service import (
 	DOMElementNode,
@@ -70,7 +69,7 @@ class AgentHistory(BaseModel):
 
 	model_output: AgentOutput | None
 	result: list[ActionResult]
-	state: BrowserStateHistory
+	state: str
 
 	model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
 
@@ -101,7 +100,7 @@ class AgentHistory(BaseModel):
 		return {
 			'model_output': model_output_dump,
 			'result': [r.model_dump(exclude_none=True) for r in self.result],
-			'state': self.state.to_dict(),
+			'state': self.state,
 		}
 
 
@@ -146,8 +145,6 @@ class AgentHistoryList(BaseModel):
 					h['model_output'] = output_model.model_validate(h['model_output'])
 				else:
 					h['model_output'] = None
-			if 'interacted_element' not in h['state']:
-				h['state']['interacted_element'] = None
 		history = cls.model_validate(data)
 		return history
 
@@ -179,14 +176,6 @@ class AgentHistoryList(BaseModel):
 	def has_errors(self) -> bool:
 		"""Check if the agent has any errors"""
 		return len(self.errors()) > 0
-
-	def urls(self) -> list[str]:
-		"""Get all unique URLs from history"""
-		return [h.state.url for h in self.history if h.state.url]
-
-	def screenshots(self) -> list[str]:
-		"""Get all screenshots from history"""
-		return [h.state.screenshot for h in self.history if h.state.screenshot]
 
 	def action_names(self) -> list[str]:
 		"""Get all action names from history"""

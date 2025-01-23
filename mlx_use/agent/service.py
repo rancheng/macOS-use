@@ -259,8 +259,8 @@ class Agent:
 			if not result:
 				return
 
-			# if state:
-			# self._make_history_item(model_output, state, result)
+			if state:
+				self._make_history_item(model_output, state, result)
 
 	async def _handle_step_error(self, error: Exception) -> list[ActionResult]:
 		"""Handle all types of errors that can occur during a step"""
@@ -293,27 +293,16 @@ class Agent:
 	def _make_history_item(
 		self,
 		model_output: AgentOutput | None,
-		state: BrowserState,
+		state: str,
 		result: list[ActionResult],
 	) -> None:
 		"""Create and store history item"""
 		interacted_element = None
 		len_result = len(result)
 
-		if model_output:
-			interacted_elements = AgentHistory.get_interacted_element(model_output, state.selector_map)
-		else:
-			interacted_elements = [None]
+		interacted_elements = [None]
 
-		state_history = BrowserStateHistory(
-			url=state.url,
-			title=state.title,
-			tabs=state.tabs,
-			interacted_element=interacted_elements,
-			screenshot=state.screenshot,
-		)
-
-		history_item = AgentHistory(model_output=model_output, result=result, state=state_history)
+		history_item = AgentHistory(model_output=model_output, result=result, state=state)
 
 		self.history.history.append(history_item)
 
