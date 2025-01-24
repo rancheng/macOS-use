@@ -73,7 +73,7 @@ class MacUITreeBuilder:
 	def _get_actions(self, element: 'AXUIElement') -> List[str]:
 		"""Get available actions for an element"""
 		try:
-			actions = AXUIElementCopyActionNames(element)
+			actions = AXUIElementCopyActionNames(element, None)
 			return actions
 		except Exception as e:
 			print(f'Error getting actions: {e}')
