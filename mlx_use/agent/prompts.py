@@ -16,7 +16,8 @@ class SystemPrompt:
   "actions": [
     {{"open_app": {{"app_name": "calculator"}}}},
     {{"click_element": {{"index": 0}}}},
-    {{"input_text": {{"index": 1, "text": "Hello"}}}}
+    {{"input_text": {{"index": 1, "text": "Hello", "submit": true}}}}
+
   ]
 }}
 
@@ -35,11 +36,15 @@ class SystemPrompt:
 - Only use indexes that exist in the provided element list
 - Each element has a unique index number (e.g. "0: Button: Submit")
 - Elements are refreshed after each action execution
+- Use input_text with submit=True for text fields needing Enter submission (e.g. "input_text": "index": 1, "text": "Hello", "submit": true)
+
 
 5. ERROR RECOVERY:
 - If "No PID" error occurs: Retry open_app action
 - If element not found: Verify app is open and element index exists
 - If multiple failures occur: Start over with open_app
+- If text input fails: Verify element is a text field
+- If submit fails: Try click_element on submit button instead
 
 6. TASK COMPLETION:
 - Use the 'done' action when task is complete
@@ -55,7 +60,7 @@ INPUT STRUCTURE:
    [index] ElementType: Description
    Example:
    [0] Button: Close
-   [1] TextField: Search
+   [1] TextField: Search (submit)
 3. Previous Results: Outcomes of last executed actions
 """
 

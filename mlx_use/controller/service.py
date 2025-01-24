@@ -43,14 +43,14 @@ class Controller:
 			return ActionResult(extracted_content=text, is_done=True)
 
 		@self.registry.action('Input text', requires_mac_builder=True)
-		async def input_text(index: int, text: str, mac_tree_builder: MacUITreeBuilder):
+		async def input_text(index: int, text: str, submit: bool, mac_tree_builder: MacUITreeBuilder):
 			logger.info(f'Inputting text {text} into element with index {index}')
 
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_input_text = mac_tree_builder._element_cache[index]
 					print(f'Attempting to input text: {element_to_input_text}')
-					input_successful = type_into(element_to_input_text, text)
+					input_successful = type_into(element_to_input_text, text, submit)
 					if input_successful:
 						print('✅ Input successful!')
 					else:
