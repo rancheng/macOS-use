@@ -75,12 +75,12 @@ class MessageManager:
 		]
 
 		example_tool_call = AIMessage(
-			content=f'',
-			tool_calls=tool_calls,
-		)
+        content="",
+        tool_calls=tool_calls
+    )
 		self._add_message_with_tokens(example_tool_call)
 		tool_message = ToolMessage(
-			content=f'Browser started',
+			content='macOS automation session started',
 			tool_call_id=str(self.tool_id),
 		)
 		self._add_message_with_tokens(tool_message)

@@ -28,17 +28,17 @@ def set_llm(llm_provider:str = None):
 		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp',  api_key=SecretStr(api_key))
 	
 llm = set_llm('google')
-llm = set_llm('OAI')
+# llm = set_llm('OAI')
 
 
 controller = Controller()
 
 
-task = 'Can you check what hour is Shabbat in israel today? call done when you finish.'
+# task = 'Can you check what hour is Shabbat in israel today? call done when you finish.'
 
 # task = 'Open notes and create new note and type in it "Hello world" and then call done.'
 
-# task = 'calculate how much is 5 X 4 and return the result, then call done.'
+task = 'calculate how much is 5 X 4 and return the result, then call done.'
 
 agent = Agent(
 	task=task,

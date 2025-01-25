@@ -2,6 +2,22 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel
 
+# mlx-use actions 
+
+
+class DoneAction(BaseModel):
+	text: str
+
+class InputTextAction(BaseModel):
+	index: int
+	text: str
+	submit: bool
+
+class ClickElementAction(BaseModel):
+	index: int
+
+class OpenAppAction(BaseModel):
+	app_name: str
 
 # Action Input Models
 class SearchGoogleAction(BaseModel):
@@ -23,8 +39,6 @@ class InputTextAction(BaseModel):
 	xpath: Optional[str] = None
 
 
-class DoneAction(BaseModel):
-	text: str
 
 
 class SwitchTabAction(BaseModel):

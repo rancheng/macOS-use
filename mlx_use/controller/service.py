@@ -8,16 +8,10 @@ from playwright.async_api import Page
 from mlx_use.agent.views import ActionModel, ActionResult
 from mlx_use.controller.registry.service import Registry
 from mlx_use.controller.views import (
-	ClickElementAction,
 	DoneAction,
-	ExtractPageContentAction,
-	GoToUrlAction,
 	InputTextAction,
-	OpenTabAction,
-	ScrollAction,
-	SearchGoogleAction,
-	SendKeysAction,
-	SwitchTabAction,
+	ClickElementAction,
+	OpenAppAction
 )
 from mlx_use.mac.actions import click, type_into
 from mlx_use.mac.tree import MacUITreeBuilder
@@ -38,11 +32,16 @@ class Controller:
 	def _register_default_actions(self):
 		"""Register all default browser actions"""
 
-		@self.registry.action('Complete task with text for the user')
+		@self.registry.action(
+				'Complete task with text for the user',
+				param_model=DoneAction)
 		async def done(text: str):
 			return ActionResult(extracted_content=text, is_done=True)
 
-		@self.registry.action('Input text', requires_mac_builder=True)
+		@self.registry.action(
+				'Input text', 
+				param_model=InputTextAction,
+				requires_mac_builder=True)
 		async def input_text(index: int, text: str, submit: bool, mac_tree_builder: MacUITreeBuilder):
 			logger.info(f'Inputting text {text} into element with index {index}')
 
@@ -64,7 +63,10 @@ class Controller:
 
 			return ActionResult(extracted_content=f'input text into element with index {index}')
 
-		@self.registry.action('Click element', requires_mac_builder=True)
+		@self.registry.action(
+				'Click element',
+				param_model=ClickElementAction,
+				  requires_mac_builder=True)
 		async def click_element(index: int, mac_tree_builder: MacUITreeBuilder):
 			logger.info(f'Clicking element {index}')
 
@@ -88,6 +90,7 @@ class Controller:
 
 		@self.registry.action(
 			'Open a mac app always use lowercase',
+			param_model=OpenAppAction
 		)
 		async def open_app(app_name: str):
 			workspace = Cocoa.NSWorkspace.sharedWorkspace()
