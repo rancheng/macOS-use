@@ -21,9 +21,9 @@
 mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
 
 # Our Vision:
-TLDR: Tell every Apple device what to do, and it gets it done, on EVERY APP.
+TLDR: Tell every Apple device what to do, and it gets done. on EVERY APP.
 <br><br>
-This project aimes to be build the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on an Apple device. Our final goal is a open source library that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
+This project aimes to build the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on any Apple device. Our final goal is a open source that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
 
 
 # Getting strated
@@ -54,6 +54,9 @@ Install locally and that'e good to go! try the first exmaple!
 ```bash
 uv pip install --eitable . && pytohn examples/try.py
 ```
+
+Please let me know how it goes! I'm available on [Discord](https://link.browser-use.com/discord) and [Twitter](https://x.com/OfirOzeri).
+
 
 # WARNING
 This project is stil under developmeant and user discretion is advised!
