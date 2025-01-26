@@ -15,9 +15,9 @@
 <div align="center">
   <h3>Developed by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h3>
 </div>
-Enable AI to control your MacBook apps(in the future: iPhone, iPads) 🤖.
+
 <br>
-mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
+mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with EVERY app from the Apple framework
 
 # Our Vision:
 TLDR: Tell every Apple device what to do, and it gets it done, on EVERY APP.
