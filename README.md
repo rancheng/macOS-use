@@ -54,7 +54,7 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 
 # Demos
-## click for full video
+## Click for full video
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done.
 [![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
 
@@ -69,6 +69,7 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 [![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
 
 <br>
+
 ## Roadmap goals:
 1. Support MacBooks at SOTA reliability 
 - [ ] Refine the Agent prompting.
