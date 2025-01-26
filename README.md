@@ -15,8 +15,9 @@
 <div align="center">
   <h3>Developed by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h3>
 </div>
-Enable AI to control your MacBook apps(in the future: iPhone, iPads) 🤖.
+
 <br>
+
 mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
 
 # Our Vision:
@@ -34,8 +35,9 @@ Clone the repo
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
-Get an API from one of the supported providers [OAI]() [Anthropic]() or [Gemini]() and set it in the .env file
-<br>
+Get an API from one of the supported providers [OAI](https://platform.openai.com/docs/quickstart), [Anthropic](https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key) or [Gemini](https://ai.google.dev/gemini-api/docs/api-key) (deepseek R1 coming soon!) and set it in the .env file
+
+<br> At the moment, mlx-use works best with OAI or Anthropic API, tho Gemini is free. it works great two, just not as reliably. <br>
 
 ```bash
 cp .env.example .env
@@ -60,7 +62,7 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 
 # Demos
-## Click for full video
+## Click for the full video!
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
 
@@ -81,7 +83,7 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish.
 
  <br>
- 
+
 [![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
 
 <br>
