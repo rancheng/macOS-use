@@ -27,7 +27,7 @@ This project aimes to be build the AI agent of the MLX framework by Apple that w
 
 
 # Getting strated
-⚠️ Please read the [Warning](#warning) first!<br>
+⚠️ Please read the [Warning](#⚠️-WARNING) first!<br>
 
 Clone the repo
 <br>
