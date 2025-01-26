@@ -26,7 +26,7 @@ This project aimes to build the AI agent of the MLX framework by Apple that woul
 
 
 # Getting strated
-⚠️ Caution: Please make sure to read the [Warning](#warning) section before proceeding. <br> As this is an early release, You might experience varying success rates depending on task prompt, and we're actively working on improvements. contact me on [Discord](https://link.browser-use.com/discord) or follow me on [Twitter](https://x.com/OfirOzeri), your input is crucial and highly valuable!
+⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> As this is an early release, You might experience varying success rates depending on task prompt, and we're actively working on improvements. contact me on [Discord](https://link.browser-use.com/discord) or follow me on [Twitter](https://x.com/OfirOzeri), your input is crucial and highly valuable!
 
 Clone the repo
 <br>
