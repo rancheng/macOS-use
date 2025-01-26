@@ -15,7 +15,7 @@ Enable AI to control your MacBook apps(Soon: iPhone, iPads) 🤖.
 <br>
 mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
 
-# Vision:
+# Our Vision:
 This project aimes to be the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on an Apple device. Our final goal is a open source library that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
 
 ## Roadmap goals:
@@ -24,7 +24,7 @@ This project aimes to be the AI agent of the MLX framework by Apple that would a
 3. Support iPhone/iPad
 
 # Getting strated
-Please read the [Warning](#warning) first!
+⚠️ Please read the [Warning](#warning) ⚠️ first!
 clone the repo
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
