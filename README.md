@@ -26,7 +26,7 @@ This project aimes to build the AI agent of the MLX framework by Apple that woul
 
 
 # Getting strated
-⚠️ Please read the [Warning](#warning) first!<br>
+⚠️ Caution: Please make sure to read the [Warning](#warning) section before proceeding. <br> As this is an early release, You might experience varying success rates depending on task prompt, and we're actively working on improvements. contact me on [Discord](https://link.browser-use.com/discord) or follow me on [Twitter](https://x.com/OfirOzeri), your input is crucial and highly valuable!
 
 Clone the repo
 <br>
@@ -54,7 +54,7 @@ Install locally and that'e good to go! try the first exmaple!
 uv pip install --eitable . && pytohn examples/try.py
 ```
 
-Please let me know how it goes! I'm available on [Discord](https://link.browser-use.com/discord) and [Twitter](https://x.com/OfirOzeri).
+
 
 
 # WARNING
