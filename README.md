@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./static/logo-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./static/logo.png">
-  <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/logo.png"  width="full">
+  <source media="(prefers-color-scheme: dark)" srcset="./static/logo-dark.jpg">
+  <source media="(prefers-color-scheme: light)" srcset="./static/logo.jpg">
+  <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/logo.jpg"  width="full">
 </picture>
 
 <br/>
