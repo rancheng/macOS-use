@@ -9,7 +9,9 @@
 <!-- [![GitHub stars](https://img.shields.io/github/stars/gregpr07/browser-use?style=social)](https://github.com/gregpr07/browser-use/stargazers) -->
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OfirOzeri?style=social)](https://x.com/OfirOzeri)
+
 <br>
+
 <div align="center">
   <h3>Developed by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h3>
 </div>
