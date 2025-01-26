@@ -26,7 +26,7 @@ This project aimes to be the AI agent of the MLX framework by Apple that would a
 3. Support iPhone/iPad
 
 # Getting strated
-⚠️ Please read the [Warning](#warning) first!<b>
+⚠️ Please read the [Warning](#warning) first!<br>
 clone the repo
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
@@ -42,7 +42,7 @@ Install locally and thasts it! your'w good to go! try the first exmaple!
 uv pip install --eitable . && pytohn examples/try.py
 ```
 
-# WARNING
+# ⚠️ WARNING
 This project is stil under developmeant and user discretion is advised!
 mlx-use can and will use your private credetials to complete it's task, lunch and interact WITH EVERY APP and UI componant in your MacBook and restrictions are to model are still under active development! it is not recoammnded to operate it un-supervised YET
 mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so once again, user discretion is advised.
