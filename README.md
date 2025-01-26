@@ -18,8 +18,7 @@
 
 <br>
 
-mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
-
+mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework, [see it in action!](#demos)
 # Our Vision:
 TLDR: Tell every Apple device what to do, and it gets done. on EVERY APP.
 <br><br>
