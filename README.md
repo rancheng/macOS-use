@@ -15,9 +15,9 @@
 <div align="center">
   <h3>Developed by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h3>
 </div>
-
+Enable AI to control your MacBook apps(in the future: iPhone, iPads) 🤖.
 <br>
-mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with EVERY app from the Apple framework
+mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
 
 # Our Vision:
 TLDR: Tell every Apple device what to do, and it gets it done, on EVERY APP.
@@ -78,7 +78,10 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 <br/>
 
-[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish. <br>
+[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish.
+
+ <br>
+ 
 [![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
 
 <br>
