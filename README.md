@@ -6,13 +6,22 @@
 
 <br/>
 
-[![GitHub stars](https://img.shields.io/github/stars/gregpr07/browser-use?style=social)](https://github.com/gregpr07/browser-use/stargazers)
+<!-- [![GitHub stars](https://img.shields.io/github/stars/gregpr07/browser-use?style=social)](https://github.com/gregpr07/browser-use/stargazers) -->
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
-[![Documentation](https://img.shields.io/badge/Documentation-📕-blue)](https://docs.browser-use.com)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Gregor?style=social)](https://x.com/gregpr07)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Magnus?style=social)](https://x.com/mamagnus00)
+<!-- [![Documentation](https://img.shields.io/badge/Documentation-📕-blue)](https://docs.browser-use.com) -->
+[![Twitter Follow](https://img.shields.io/twitter/follow/OfirOzeri?style=social)](https://x.com/OfirOzeri)
 
-Enable AI to control your browser 🤖.
+Enable AI to control your MacBook apps(Soon: iPhone, iPads) 🤖.
+<br>
+mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
+
+# Vision:
+This project aimes to be the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on an Apple device. Our final goal is a open source library that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
+
+## Roadmap goals:
+1. Support MacBooks at SOTA reliability 
+2. Support local infrence with small fine tuned model
+3. Support iPhone/iPad
 
 
 
