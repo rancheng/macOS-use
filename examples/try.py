@@ -39,6 +39,8 @@ controller = Controller()
 # task = 'Open notes and create new note and type in it "Hello world" and then call done.'
 
 task = 'calculate how much is 5 X 4 and return the result, then call done.'
+task = 'Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish'
+
 
 agent = Agent(
 	task=task,

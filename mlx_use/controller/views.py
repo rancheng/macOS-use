@@ -19,43 +19,43 @@ class ClickElementAction(BaseModel):
 class OpenAppAction(BaseModel):
 	app_name: str
 
-# Action Input Models
-class SearchGoogleAction(BaseModel):
-	query: str
+# # Action Input Models
+# class SearchGoogleAction(BaseModel):
+# 	query: str
 
 
-class GoToUrlAction(BaseModel):
-	url: str
+# class GoToUrlAction(BaseModel):
+# 	url: str
 
 
-class ClickElementAction(BaseModel):
-	index: int
-	xpath: Optional[str] = None
+# class ClickElementAction(BaseModel):
+# 	index: int
+# 	xpath: Optional[str] = None
 
 
-class InputTextAction(BaseModel):
-	index: int
-	text: str
-	xpath: Optional[str] = None
+# class InputTextAction(BaseModel):
+# 	index: int
+# 	text: str
+# 	xpath: Optional[str] = None
 
 
 
 
-class SwitchTabAction(BaseModel):
-	page_id: int
+# class SwitchTabAction(BaseModel):
+# 	page_id: int
 
 
-class OpenTabAction(BaseModel):
-	url: str
+# class OpenTabAction(BaseModel):
+# 	url: str
 
 
-class ExtractPageContentAction(BaseModel):
-	include_links: bool
+# class ExtractPageContentAction(BaseModel):
+# 	include_links: bool
 
 
-class ScrollAction(BaseModel):
-	amount: Optional[int] = None  # The number of pixels to scroll. If None, scroll down/up one page
+# class ScrollAction(BaseModel):
+# 	amount: Optional[int] = None  # The number of pixels to scroll. If None, scroll down/up one page
 
 
-class SendKeysAction(BaseModel):
-	keys: str
+# class SendKeysAction(BaseModel):
+# 	keys: str

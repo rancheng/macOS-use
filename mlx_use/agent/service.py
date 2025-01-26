@@ -60,7 +60,7 @@ class Agent:
 		use_vision: bool = True,
 		save_conversation_path: Optional[str] = None,
 		save_conversation_path_encoding: Optional[str] = 'utf-8',
-		max_failures: int = 3,
+		max_failures: int = 5,
 		retry_delay: int = 10,
 		system_prompt_class: Type[SystemPrompt] = SystemPrompt,
 		max_input_tokens: int = 128000,
