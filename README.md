@@ -33,17 +33,19 @@ Clone the repo
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
 Get an API from one of the supported providers [OAI]() [Anthropic]() or [Gemini]() and set it in the .env file
+<br>
+
 ```bash
 cp .env.example .env
 ```
-<br>
 We reccomand using mlx-use with uv environment
+<br>
 
 ```bash
 brew install uv && uv venv && ./.venv/bin/activate
 ```
-<br>
 Install locally and thasts it! your'w good to go! try the first exmaple!
+<br>
 
 ```bash
 uv pip install --eitable . && pytohn examples/try.py
