@@ -24,9 +24,11 @@ This project aimes to be build the AI agent of the MLX framework by Apple that w
 
 
 # Getting strated
-⚠️ Please read the [Warning](#warning) first!<br><br>
+⚠️ Please read the [Warning](#warning) first!<br>
 
 Clone the repo
+<br>
+
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
@@ -40,7 +42,7 @@ We reccomand using mlx-use with uv environment
 ```bash
 brew install uv && uv venv && ./.venv/bin/activate
 ```
-
+<br>
 Install locally and thasts it! your'w good to go! try the first exmaple!
 
 ```bash
