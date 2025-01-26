@@ -48,7 +48,7 @@ We reccomand using mlx-use with uv environment
 ```bash
 brew install uv && uv venv && ./.venv/bin/activate
 ```
-Install locally and thasts it! your'w good to go! try the first exmaple!
+Install locally and that’s it! your'e good to go! try the first exmaple!
 <br>
 
 ```bash
@@ -62,7 +62,7 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 
 # Demos
-## Click for the full video!
+<h3> Click for the full video! </h3>
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
 
