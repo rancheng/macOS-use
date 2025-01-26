@@ -27,7 +27,7 @@ This project aimes to be build the AI agent of the MLX framework by Apple that w
 
 
 # Getting strated
-⚠️ Please read the [Warning](#warning) first!<br>
+⚠️ Please read the [Warning](#WARNING) first!<br>
 
 Clone the repo
 <br>
@@ -55,7 +55,7 @@ Install locally and that'e good to go! try the first exmaple!
 uv pip install --eitable . && pytohn examples/try.py
 ```
 
-# {#warning} WARNING ⚠️ 
+#WARNING
 This project is stil under developmeant and user discretion is advised!
 mlx-use can and will use your private credentials, [auth services](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py) or stored passwords to complete its task, launch and interact WITH EVERY APP and UI component in your MacBook and restrictions to the model are still under active development! It is not recommended to operate it unsupervised YET
 mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so once again, user discretion is advised.
