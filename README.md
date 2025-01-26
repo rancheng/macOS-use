@@ -32,7 +32,7 @@ clone the repo
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
 Get an API from one of the supported providers [OAI]() [Anthropic]() or [Gemini]() and set it in the .env file
-<b>
+<br>
 We reccomand using mlx-use with uv environment
 ```bash
 brew install uv && uv venv && ./.venv/bin/activate
@@ -49,17 +49,17 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 
 # Demos 
-[prompt](): calculate how much is 5 X 4 and return the result, then call done.
+[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): calculate how much is 5 X 4 and return the result, then call done.
 [![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
 
 <br/><br/>
 
-[prompt](): Can you check what hour is Shabbat in israel today? call done when you finish.
+[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/check_time_online.py): Can you check what hour is Shabbat in israel today? call done when you finish.
 [![check-time-online](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
 
 <br/><br/>
 
-[prompt](): Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish.
+[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish.
 [![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
 
 
