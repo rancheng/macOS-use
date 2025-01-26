@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./static/mlx-use-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./static/mlx-use.png">
-  <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/mlx-use.png"  width="full">
+  <source media="(prefers-color-scheme: dark)" srcset="./static/logo-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./static/logo.png">
+  <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/logo.png"  width="full">
 </picture>
 
 <br/>
