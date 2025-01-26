@@ -1,8 +1,18 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./static/logo-dark.jpg">
-  <source media="(prefers-color-scheme: light)" srcset="./static/logo.jpg">
-  <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/logo.jpg"  width="full">
-</picture>
+<!-- Container div to control the image width -->
+<div style="max-width: 2200px; width: 100%; margin: 0 auto;">
+  <picture style="display: block; width: 100%;">
+    <!-- Dark mode version -->
+    <source media="(prefers-color-scheme: dark)" srcset="./static/logo-dark.jpg">
+    <!-- Light mode version -->
+    <source media="(prefers-color-scheme: light)" srcset="./static/logo.jpg">
+    <!-- Fallback image with aspect ratio preservation -->
+    <img 
+      alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode."
+      src="./static/logo.jpg"
+      style="width: 100%; height: auto; aspect-ratio: 2200/550;"
+    >
+  </picture>
+</div>
 
 <br/>
 
