@@ -5,7 +5,7 @@
     alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." 
     src="./static/logo.jpg" 
     width="2200"
-    height="550"
+    height="250"
   >
 </picture>
 
