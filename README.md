@@ -83,12 +83,13 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 - [ ] Fine tune a small model that every device can run infrence with
 - [ ] SOTA reliability.
 3. Support iPhone/iPad
+
 <br>
+
 ## Contributing
 
 We are a new project and would love contributors! Feel free to PR, open issues for bugs or feature requests.
 
-## Thanks
 ## Thanks
 
 We would like to extend our heartfelt thanks to [![Twitter Follow](https://img.shields.io/twitter/follow/Gregor?style=social)](https://x.com/gregpr07) and [![Twitter Follow](https://img.shields.io/twitter/follow/Magnus?style=social)](https://x.com/mamagnus00) for their incredible work in developing Browser Use. Their dedication and expertise have been invaluable, especially in helping with the migration process. We couldn't have done it without you guys!
