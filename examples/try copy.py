@@ -20,19 +20,11 @@ def set_llm(llm_provider:str = None):
 		raise ValueError("No llm provider was set")
 	
 	if llm_provider == "OAI":
-		try:
-			api_key = os.getenv('OPENAI_API_KEY')
-		except Exception as e:
-			print(f"Error while getting API key: {e}")
-			api_key = None
+		api_key = os.getenv('OPENAI_API_KEY')
 		return ChatOpenAI(model='gpt-4o', api_key=SecretStr(api_key))
 	
 	if llm_provider == "google":
-		try:
-			api_key = os.getenv('GEMINI_API_KEY')
-		except Exception as e:
-			print(f"Error while getting API key: {e}")
-			api_key = None
+		api_key = os.getenv('GEMINI_API_KEY')
 		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp',  api_key=SecretStr(api_key))
 	
 llm = set_llm('google')
@@ -40,7 +32,15 @@ llm = set_llm('OAI')
 
 
 controller = Controller()
-task = input("Hi there! What can I do for you today? ")
+
+
+# task = 'Can you check what hour is Shabbat in israel today? call done when you finish.'
+
+# task = 'Open notes and create new note and type in it "Hello world" and then call done.'
+
+task = 'calculate how much is 5 X 4 and return the result, then call done.'
+# task = 'Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish'
+
 
 agent = Agent(
 	task=task,
@@ -48,7 +48,7 @@ agent = Agent(
 	controller=controller,
 	use_vision=False,
 	max_actions_per_step=1,
-	max_failures=5
+	# max_failures=3
 )
 
 

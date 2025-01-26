@@ -16,6 +16,8 @@ Enable AI to control your MacBook apps(Soon: iPhone, iPads) 🤖.
 mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework
 
 # Our Vision:
+TLDR: Tell every Apple device what to do, and it gets it done, on EVERY APP.
+<br>
 This project aimes to be the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on an Apple device. Our final goal is a open source library that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
 
 ## Roadmap goals:
@@ -24,19 +26,20 @@ This project aimes to be the AI agent of the MLX framework by Apple that would a
 3. Support iPhone/iPad
 
 # Getting strated
-⚠️ Please read the [Warning](#warning) ⚠️ first!
+⚠️ Please read the [Warning](#warning) first!<b>
 clone the repo
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
-Get an API from one of the supported providers [OAI]() [Anthropic]() or [Gemini]()
+Get an API from one of the supported providers [OAI]() [Anthropic]() or [Gemini]() and set it in the .env file
+<b>
 We reccomand using mlx-use with uv environment
 ```bash
 brew install uv && uv venv && ./.venv/bin/activate
 ```
 Install locally and thasts it! your'w good to go! try the first exmaple!
 ```bash
-uv pip install . --eitable && pytohn examples/try.py
+uv pip install --eitable . && pytohn examples/try.py
 ```
 
 # WARNING
@@ -45,7 +48,30 @@ mlx-use can and will use your private credetials to complete it's task, lunch an
 mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so once again, user discretion is advised.
 
 
+# Demos 
+[prompt](): calculate how much is 5 X 4 and return the result, then call done.
 [![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
+
+<br/><br/>
+
+[prompt](): Can you check what hour is Shabbat in israel today? call done when you finish.
+[![check-time-online](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
+
+<br/><br/>
+
+[prompt](): Go to auth0.com, sign in with google auth, choose ofiroz91@gmail.com account, login to the website and call done when you finish.
+[![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
+
+
+
+
+
+
+
+
+
+
+
 
 Browser use is the easiest way to connect your AI agents with the browser. If you have used Browser Use for your project feel free to show it off in our [Discord](https://link.browser-use.com/discord).
 
