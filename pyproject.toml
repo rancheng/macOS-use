@@ -1,8 +1,8 @@
 [project]
-name = "browser-use"
-description = "Make websites accessible for AI agents"
+name = "mlx-use"
+description = "Make MacOS apps accessible for AI agents"
 authors = [
-    { name = "Gregor Zunic" }
+    { name = "Ofir Ozeri" mail = "ofiroz91@gmail.com" }
 ]
 version = "0.1.27"
 readme = "README.md"

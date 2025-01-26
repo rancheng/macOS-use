@@ -14,6 +14,10 @@
 
 Enable AI to control your browser 🤖.
 
+
+
+[![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
+
 Browser use is the easiest way to connect your AI agents with the browser. If you have used Browser Use for your project feel free to show it off in our [Discord](https://link.browser-use.com/discord).
 
 To learn more about the library, check out the [documentation 📕](https://docs.browser-use.com).
