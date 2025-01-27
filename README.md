@@ -38,13 +38,18 @@ Clone first
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
-Don't forget an API and set it in the .env file <br>Supported providers: [OAI](https://platform.openai.com/docs/quickstart), [Anthropic](https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key) or [Gemini](https://ai.google.dev/gemini-api/docs/api-key) (deepseek R1 coming soon!) 
+Don't forget to get and API key and set it in the .env file <br>Supported providers: [OAI](https://platform.openai.com/docs/quickstart), [Anthropic](https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key) or [Gemini](https://ai.google.dev/gemini-api/docs/api-key) (deepseek R1 coming soon!) 
 
 <br> At the moment, mlx-use works best with OAI or Anthropic API, tho Gemini is free. it works great two, just not as reliably. <br>
 
 ```bash
 cp .env.example .env
 ```
+
+```bash
+open ./.env
+```
+
 We reccomand using mlx-use with uv environment
 <br>
 
