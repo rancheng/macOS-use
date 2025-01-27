@@ -2,9 +2,9 @@
 name = "mlx-use"
 description = "Make MacOS apps accessible for AI agents"
 authors = [
-    { name = "Ofir Ozeri" mail = "ofiroz91@gmail.com" }
+    { name = "Ofir Ozeri", mail = "ofiroz91@gmail.com" }
 ]
-version = "0.0.1"
+version = "0.0.3"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
