@@ -62,7 +62,7 @@ python exmaple/calculate.py
 
 <br>
 
-[![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif?v=2  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
+[![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif?raw-true  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
 
 <br/>
 
