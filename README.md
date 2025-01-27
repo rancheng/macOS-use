@@ -135,8 +135,8 @@ This project aimes to build the AI agent for the MLX by Apple framework that wou
 # WARNING
 
 This project is still under development and user discretion is advised!
-mlx-use can and will use your do [login](#demos), use private credentials, [auth services](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py) or stored passwords to complete its task, launch and interact WITH EVERY APP and UI component in your MacBook and restrictions to the model are still under active development! It is not recommended to operate it unsupervised YET
-mlx-use WILL NOT STOP at captcha or any other forms of bot identifications, so once again, user discretion is advised.
+macOS-use can and will use your do [login](#demos), use private credentials, [auth services](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py) or stored passwords to complete its task, launch and interact WITH EVERY APP and UI component in your MacBook and restrictions to the model are still under active development! It is not recommended to operate it unsupervised YET
+macOS-use WILL NOT STOP at captcha or any other forms of bot identifications, so once again, user discretion is advised.
 
 ## Disclaimer:
 
