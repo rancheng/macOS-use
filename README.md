@@ -53,19 +53,6 @@ Install locally and that'e good to go! try the first exmaple!
 uv pip install --eitable . && pytohn examples/try.py
 ```
 
-
-
-
-# WARNING
-
-This project is stil under developmeant and user discretion is advised!
-mlx-use can and will use your private credentials, [auth services](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py) or stored passwords to complete its task, launch and interact WITH EVERY APP and UI component in your MacBook and restrictions to the model are still under active development! It is not recommended to operate it unsupervised YET
-mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so once again, user discretion is advised.
-
-## Disclamr:
-
-As this is an early stage release, You might experience varying success rates depending on task prompt, we're actively working on improvements. <br> talk me on [X/Twitter](https://x.com/OfirOzeri) or contact me on [Discord](https://link.browser-use.com/discord), your input is crucial and highly valuable!<br>
-
 # Demos
 <h3> Click for the full video! </h3>
 
@@ -125,6 +112,17 @@ This project aimes to build the AI agent of the MLX framework by Apple that woul
 3. Support iPhone/iPad
 
 <br>
+
+# WARNING
+
+This project is stil under developmeant and user discretion is advised!
+mlx-use can and will use your private credentials, [auth services](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py) or stored passwords to complete its task, launch and interact WITH EVERY APP and UI component in your MacBook and restrictions to the model are still under active development! It is not recommended to operate it unsupervised YET
+mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so once again, user discretion is advised.
+
+## Disclamr:
+
+As this is an early stage release, You might experience varying success rates depending on task prompt, we're actively working on improvements. <br> talk me on [X/Twitter](https://x.com/OfirOzeri) or contact me on [Discord](https://link.browser-use.com/discord), your input is crucial and highly valuable!<br>
+
 
 ## Contributing
 
