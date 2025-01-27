@@ -56,7 +56,7 @@ We reccomand using mlx-use with uv environment
 ```bash
 brew install uv && uv venv && ./.venv/bin/activate
 ```
-Install locally and that'e good to go! try the first exmaple!
+Install locally and you're good to go! try the first exmaple!
 <br>
 
 ```bash
