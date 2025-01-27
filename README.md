@@ -13,16 +13,15 @@
 <br>
 
 <div align="center">
-  <h2>Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri <br> Command any Apple device, and it’s done—across every app.</a> </h2>
+  <h2>Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
+  <a href="#our-vision">Command any Apple device, and it's done—across every app.</a> <br>
+   </h2>
 </div>
 
 <br>
 
 mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework, [see it in action!](#demos)
-# Our Vision:
-TLDR: Tell every Apple device what to do, and it gets done. on EVERY APP.
-<br><br>
-This project aimes to build the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on any Apple device. Our final goal is a open source that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
+
 
 
 # Getting strated
@@ -89,6 +88,12 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 [![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
 
 <br>
+
+
+# Our Vision:
+TLDR: Tell every Apple device what to do, and it gets done. on EVERY APP.
+<br><br>
+This project aimes to build the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on any Apple device. Our final goal is a open source that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
 
 ## Roadmap goals:
 1. Support MacBooks at SOTA reliability 
