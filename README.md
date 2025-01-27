@@ -25,12 +25,13 @@ mlx-use enables AI agents to interact with Apple framework applications through 
 # Quick start
 ⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> 
 
-With pip:
+### With pip:
 
 ```bash
 pip install mlx-use
 ```
 
+### From github 
 Clone first
 <br>
 
