@@ -13,7 +13,7 @@
 <br>
 
 <div align="center">
-  <h2><a href="#our-vision">Command any Apple device, and it's done—across every app.</a><br>
+  <h2><a href="#our-vision">Command your MacBook, and it's done—across every app.</a><br>
   Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
    </h2>
 </div>
@@ -27,13 +27,13 @@ mlx-use is a project built on Browser-use agent services and allows the AI agent
 # Quick start
 ⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> 
 
-Clone the repo
+Clone first
 <br>
 
 ```bash
 git clone https://github.com/browser-use/macOS-use.git && cd macOS-use
 ```
-Get an API from one of the supported providers [OAI](https://platform.openai.com/docs/quickstart), [Anthropic](https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key) or [Gemini](https://ai.google.dev/gemini-api/docs/api-key) (deepseek R1 coming soon!) and set it in the .env file
+Don't forget an API <br>Supported providers: [OAI](https://platform.openai.com/docs/quickstart), [Anthropic](https://docs.anthropic.com/en/api/admin-api/apikeys/get-api-key) or [Gemini](https://ai.google.dev/gemini-api/docs/api-key) (deepseek R1 coming soon!) and set it in the .env file
 
 <br> At the moment, mlx-use works best with OAI or Anthropic API, tho Gemini is free. it works great two, just not as reliably. <br>
 
@@ -69,6 +69,10 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
 
+```bash
+python exmaple/calculate.py
+```
+
 <br>
 
 [![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-times-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
@@ -77,6 +81,9 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/check_time_online.py): Can you check what hour is Shabbat in israel today? call done when you finish. 
 
+```bash
+python exmaple/check_time_online.py
+```
 <br>
 
 [![check-time-online](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
@@ -84,6 +91,10 @@ mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so on
 <br/>
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91 gmail account, login to the website and call done when you finish.
+
+```bash
+python exmaple/login_to_auth0.py
+```
 
  <br>
 
