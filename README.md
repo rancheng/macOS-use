@@ -69,12 +69,11 @@ As this is an early stage release, You might experience varying success rates de
 # Demos
 <h3> Click for the full video! </h3>
 
-<p>[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
+[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
 
 ```bash
 python exmaple/calculate.py
 ```
-</p>
 
 <br>
 
