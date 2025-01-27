@@ -62,7 +62,7 @@ python exmaple/calculate.py
 
 <br>
 
-[![calc-5-times-4](https://github.com/browser-use/macOS-use/blob/main/static/calc-5-X-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
+[![calc-5-times-4](https://github.com/browser-use/macOS-use/blob/main/static/calc-5-X-4.gif  "Click the GIF for full video!")](https://x.com/OfirOzeri/status/1883110905665433681)
 
 <br/>
 
