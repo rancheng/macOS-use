@@ -50,7 +50,7 @@ cp .env.example .env
 open ./.env
 ```
 
-We reccomand using mlx-use with uv environment
+We recommend using mlx-use with uv environment
 <br>
 
 ```bash
@@ -61,6 +61,7 @@ Install locally and you're good to go! try the first exmaple!
 
 ```bash
 uv pip install --eitable . && pytohn examples/try.py
+
 ```
 
 Try prompting it with
@@ -75,7 +76,8 @@ open the calculator app
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
 
 ```bash
-python exmaple/calculate.py
+python examples/calculate.py 
+
 ```
 
 <br>
@@ -87,7 +89,7 @@ python exmaple/calculate.py
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/check_time_online.py): Can you check what hour is Shabbat in israel today? call done when you finish. 
 
 ```bash
-python exmaple/check_time_online.py
+python exmaples/check_time_online.py
 ```
 <br>
 
@@ -98,7 +100,7 @@ python exmaple/check_time_online.py
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91 gmail account, login to the website and call done when you finish.
 
 ```bash
-python exmaple/login_to_auth0.py
+python examples/login_to_auth0.py
 ```
 
  <br>
@@ -109,9 +111,9 @@ python exmaple/login_to_auth0.py
 
 
 # Our Vision:
-TLDR: Tell every Apple device what to do, and it gets done. on EVERY APP.
+TLDR: Tell every Apple device what to do, and see it done. on EVERY APP.
 <br><br>
-This project aimes to build the AI agent of the MLX framework by Apple that would allow the agent to prefrom any action on any Apple device. Our final goal is a open source that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
+This project aimes to build the AI agent for the MLX by Apple framework that would allow the agent to prefrom any action on any Apple device. Our final goal is a open source that anyone can clone, powered by the [mlx](https://github.com/ml-explore/mlx) and [mlx-vlm](https://github.com/Blaizzy/mlx-vlm) to run local private infrence at zero cost.
 
 ## Roadmap goals:
 1. Support MacBooks at SOTA reliability 
@@ -121,9 +123,9 @@ This project aimes to build the AI agent of the MLX framework by Apple that woul
 - [ ] Add feature to allow the agent to check existing apps if failing, e.g. calendar app actual name is iCal.
 - [ ] Add action for the agent to ask input from the user. 
 - [ ] Test Test Test! and let us know what and how to improve!
-2. Support local infrence with small fine tuned model.
-- [ ] Add support for infrence with local models using mlx and mlx-vlm.
-- [ ] Fine tune a small model that every device can run infrence with.
+2. Support local inference with small fine tuned model.
+- [ ] Add support for inference with local models using mlx and mlx-vlm.
+- [ ] Fine tune a small model that every device can run inference with.
 - [ ] SOTA reliability.
 3. Support iPhone/iPad
 
@@ -131,11 +133,11 @@ This project aimes to build the AI agent of the MLX framework by Apple that woul
 
 # WARNING
 
-This project is stil under developmeant and user discretion is advised!
+This project is still under development and user discretion is advised!
 mlx-use can and will use your do [login](#demos), use private credentials, [auth services](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py) or stored passwords to complete its task, launch and interact WITH EVERY APP and UI component in your MacBook and restrictions to the model are still under active development! It is not recommended to operate it unsupervised YET
-mlx-use WILL NOT STOP at captha or any other forms of bot identifications, so once again, user discretion is advised.
+mlx-use WILL NOT STOP at captcha or any other forms of bot identifications, so once again, user discretion is advised.
 
-## Disclamr:
+## Disclaimer:
 
 As this is an early stage release, You might experience varying success rates depending on task prompt, we're actively working on improvements. <br> talk me on [X/Twitter](https://x.com/OfirOzeri) or contact me on [Discord](https://link.browser-use.com/discord), your input is crucial and highly valuable!<br>
 
