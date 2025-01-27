@@ -63,6 +63,12 @@ Install locally and you're good to go! try the first exmaple!
 uv pip install --eitable . && pytohn examples/try.py
 ```
 
+Try prompting it with
+
+```bash
+open the calculator app
+```
+
 # Demos
 <h3> Click the GIF for the full video! </h3>
 
