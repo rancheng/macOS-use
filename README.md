@@ -52,7 +52,7 @@ uv pip install --eitable . && pytohn examples/try.py
 ```
 
 # Demos
-<h3> Click for the full video! </h3>
+<h3> Click the GIF for the full video! </h3>
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/calculate.py): Calculate how much is 5 X 4 and return the result, then call done. 
 
