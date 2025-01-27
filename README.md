@@ -13,7 +13,7 @@
 <br>
 
 <div align="center">
-  <h3>Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h3>
+  <h2>Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h2>
 </div>
 
 <br>
