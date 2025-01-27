@@ -15,7 +15,6 @@ NOTES_BUNDLE_ID = 'com.apple.Notes'
 NOTES_APP_NAME = 'Notes'
 
 # Replace with your actual Gemini API key
-GEMINI_API_KEY = 'AIzaSyBpF4h7go51P5rmMWBu_3wUIVzxTke2AQk'
 llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp', api_key=SecretStr(GEMINI_API_KEY))
 
 
