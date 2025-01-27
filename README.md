@@ -20,7 +20,7 @@
 
 <br>
 
-macOS use - the first product from the mlx-use framework - enables AI agents to interact with Apple framework applications through browser-use agent tech [see it in action!](#demos)
+macOS use - the first product from the mlx-use framework - enables AI agents to interact with Macbook applications through browser-use agent tech [see it in action!](#demos)
 
 # Quick start
 ⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> 
