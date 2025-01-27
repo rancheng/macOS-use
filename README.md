@@ -1,5 +1,5 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./static/browser-use-dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./static/mlx-use-logo-dark.jpg">
   <source media="(prefers-color-scheme: light)" srcset="./static/browser-use.png">
   <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/browser-use.png"  width="full">
 </picture>
@@ -20,9 +20,7 @@
 
 <br>
 
-mlx-use is a project built on Browser-use agent services and allows the AI agent to interact with every app from the Apple framework, [see it in action!](#demos)
-
-
+mlx-use enables AI agents to interact with Apple framework applications through browser-use agent tech [see it in action!](#demos)
 
 # Quick start
 ⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> 
