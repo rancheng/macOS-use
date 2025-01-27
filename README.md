@@ -86,16 +86,6 @@ python examples/calculate.py
 
 <br/>
 
-[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/check_time_online.py): Can you check what hour is Shabbat in israel today? call done when you finish. 
-
-```bash
-python exmaples/check_time_online.py
-```
-<br>
-
-[![check-time-online](https://github.com/browser-use/macOS-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
-
-<br/>
 
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/login_to_auth0.py): Go to auth0.com, sign in with google auth, choose ofiroz91 gmail account, login to the website and call done when you finish.
 
@@ -106,6 +96,17 @@ python examples/login_to_auth0.py
  <br>
 
 [![login-to-auth0](https://github.com/browser-use/macOS-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
+
+<br/>
+
+[prompt](https://github.com/browser-use/macOS-use/blob/main/examples/check_time_online.py): Can you check what hour is Shabbat in israel today? call done when you finish. 
+
+```bash
+python exmaples/check_time_online.py
+```
+<br>
+
+[![check-time-online](https://github.com/browser-use/macOS-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
 
 <br>
 
