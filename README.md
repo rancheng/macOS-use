@@ -13,14 +13,14 @@
 <br>
 
 <div align="center">
-  <h2><a href="#our-vision">Command your MacBook, and it's done—across EVERY app.</a><br>
+  <h2><a href="#our-vision">Tell your MacBook what to do, and it's done—across EVERY app.</a><br>
   Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
    </h2>
 </div>
 
 <br>
 
-macOS-use - the first product from the mlx-use framework - enables AI agents to interact with Macbook applications through browser-use agent tech [see it in action!](#demos)
+macOS-use - the first product from the mlx-use framework - enables AI agents to interact with your Macbook [see it in action!](#demos)
 
 # Quick start
 ⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> 
