@@ -20,7 +20,7 @@
 
 <br>
 
-macOS-use - enables AI agents to interact with your Macbook [see it in action!](#demos)
+macOS-use enables AI agents to interact with your Macbook [see it in action!](#demos)
 
 # Quick start
 ⚠️ Important: Review the [Warning](#warning) section before proceeding. <br> 
