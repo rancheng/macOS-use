@@ -62,7 +62,7 @@ python exmaple/calculate.py
 
 <br>
 
-[![calc-5-times-4](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/calc-5-X-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
+[![calc-5-times-4](https://github.com/browser-use/macOS-use/blob/main/static/calc-5-X-4.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883110905665433681)
 
 <br/>
 
@@ -73,7 +73,7 @@ python exmaple/check_time_online.py
 ```
 <br>
 
-[![check-time-online](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
+[![check-time-online](https://github.com/browser-use/macOS-use/blob/main/static/check-time-online.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883109604416278552)
 
 <br/>
 
@@ -85,7 +85,7 @@ python exmaple/login_to_auth0.py
 
  <br>
 
-[![login-to-auth0](https://github.com/eDeveloperOZ/mlx-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
+[![login-to-auth0](https://github.com/browser-use/macOS-use/blob/main/static/login-to-auth0.gif  "Click for full video")](https://x.com/OfirOzeri/status/1883455599423434966)
 
 <br>
 
