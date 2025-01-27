@@ -143,11 +143,11 @@ mlx-use WILL NOT STOP at captcha or any other forms of bot identifications, so o
 As this is an early stage release, You might experience varying success rates depending on task prompt, we're actively working on improvements. <br> talk me on [X/Twitter](https://x.com/OfirOzeri) or contact me on [Discord](https://link.browser-use.com/discord), your input is crucial and highly valuable!<br>
 
 
-## Contributing
+# Contributing
 
 We are a new project and would love contributors! Feel free to PR, open issues for bugs or feature requests.
 
-## Thanks
+# Thanks
 
 I would like to extend our heartfelt thanks to [![Twitter Follow](https://img.shields.io/twitter/follow/Gregor?style=social)](https://x.com/gregpr07) and [![Twitter Follow](https://img.shields.io/twitter/follow/Magnus?style=social)](https://x.com/mamagnus00) for their incredible work in developing Browser Use. Their dedication and expertise have been invaluable, especially in helping with the migration process and I couldn't have done it without them!
 
