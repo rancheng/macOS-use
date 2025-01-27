@@ -13,7 +13,7 @@
 <br>
 
 <div align="center">
-  <h2><a href="#our-vision">Command your MacBook, and it's done—across every app.</a><br>
+  <h2><a href="#our-vision">Command your MacBook, and it's done—across EVERY app.</a><br>
   Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
    </h2>
 </div>
