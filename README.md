@@ -13,7 +13,7 @@
 <br>
 
 <div align="center">
-  <h2>Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri</a> </h2>
+  <h2>Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri <br> Command any Apple device, and it’s done—across every app.</a> </h2>
 </div>
 
 <br>
