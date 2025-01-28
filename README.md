@@ -17,7 +17,6 @@
   Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
    </h2>
 </div>
-Create an event on march 15, at 21 PM clled סטנד אפ שאולי, the location היכל התרבות איירפורט סיטי 
 <br>
 
 macOS-use enables AI agents to interact with your Macbook [see it in action!](#demos)
