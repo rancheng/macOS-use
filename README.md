@@ -6,7 +6,7 @@
 
 <br/>
 
-<!-- [![GitHub stars](https://img.shields.io/github/stars/gregpr07/browser-use?style=social)](https://github.com/gregpr07/browser-use/stargazers) -->
+[![GitHub stars](https://img.shields.io/github/stars/browser-use/macOS-use?style=social)](https://github.com/browser-use/macOS-use/stargazers)
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OfirOzeri?style=social)](https://x.com/OfirOzeri)
 
@@ -17,7 +17,7 @@
   Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
    </h2>
 </div>
-
+Create an event on march 15, at 21 PM clled סטנד אפ שאולי, the location היכל התרבות איירפורט סיטי 
 <br>
 
 macOS-use enables AI agents to interact with your Macbook [see it in action!](#demos)
