@@ -199,13 +199,12 @@ class Agent:
 
 		try:
 			# set new pid if last result has new pid loop over last result and get last pid
-			latest_pid = self.get_last_pid()
+			if not self.get_last_pid():
+				state = 'No open app you first need to open an app with open app action'
 
-			root = await self.mac_tree_builder.build_tree(latest_pid)
+			root = await self.mac_tree_builder.build_tree(self.get_last_pid())
 			if root:
 				state = root.get_clickable_elements_string()
-			else:
-				state = 'No open app you first need to open an app with open app action'
 
 			self.message_manager.add_state_message(state, self._last_result, step_info)
 			input_messages = self.message_manager.get_messages()
