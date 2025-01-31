@@ -50,6 +50,8 @@ class SystemPrompt:
 - Use the 'done' action when task is complete
 - Include all task results in the 'done' action text
 - If stuck after 3 attempts, use 'done' with error details
+7. APP UNCERTAINTY:
+- If 'open_app' fails, or if you are unsure of the correct app name, use 'list_running_apps' to see available apps.
 """
 
     def input_format(self) -> str:

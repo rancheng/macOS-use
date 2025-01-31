@@ -146,27 +146,27 @@ class MacUITreeBuilder:
 		"""Build UI tree for a specific application"""
 		try:
 			if pid is None and self._current_app_pid is None:
-				print('No PID provided and no current app PID set')
-				raise ValueError('No PID provided and no current app PID set')
+				logger.debug('No app is currently open - waiting for app to be launched')
+				raise ValueError('No app is currently open')
 
 			if pid is not None:
 				self._current_app_pid = pid
 
 				if not self._setup_observer(self._current_app_pid):
-					print('Failed to setup accessibility observer')
+					logger.warning('Failed to setup accessibility observer')
 					return None
 
-			print(f'\nAttempting to create AX element for pid {self._current_app_pid}')
+			logger.debug(f'Creating AX element for pid {self._current_app_pid}')
 			app_ref = AXUIElementCreateApplication(self._current_app_pid)
 
-			print('Testing accessibility permissions (Role)...')
+			logger.debug('Testing accessibility permissions (Role)...')
 			error, role_attr = AXUIElementCopyAttributeValue(app_ref, kAXRoleAttribute, None)
 			if error == kAXErrorSuccess:
-				print(f'✅ Successfully got role attribute: ({error}, {role_attr})')
+				logger.debug(f'Successfully got role attribute: ({error}, {role_attr})')
 			else:
-				print(f'❌ Error getting role attribute: {error}')
+				logger.error(f'Error getting role attribute: {error}')
 				if error == kAXErrorAPIDisabled:
-					print('Accessibility is not enabled. Please enable it in System Settings.')
+					logger.error('Accessibility is not enabled. Please enable it in System Settings.')
 				return None
 
 			root = MacElementNode(
@@ -179,23 +179,23 @@ class MacUITreeBuilder:
 			root._element = app_ref
 
 			# Try to get the main window
-			print('\nTrying to get the main window...')
+			logger.debug('Trying to get the main window...')
 			error, main_window_ref = AXUIElementCopyAttributeValue(app_ref, kAXMainWindowAttribute, None)
 			if error == kAXErrorSuccess and main_window_ref:
-				print(f'✅ Found main window: ({error}, {main_window_ref})')
+				logger.debug(f'Found main window: ({error}, {main_window_ref})')
 				window_node = await self._process_element(main_window_ref, self._current_app_pid, root)
 				if window_node:
 					root.children.append(window_node)
 			else:
-				print(f'⚠️ Could not get main window or an error occurred: {error}')
+				logger.warning(f'Could not get main window or an error occurred: {error}')
 
 			return root
 
 		except Exception as e:
-			print(f'Error building tree: {str(e)}')
-			import traceback
-
-			traceback.print_exc()
+			if 'No app is currently open' not in str(e):
+				logger.error(f'Error building tree: {str(e)}')
+				import traceback
+				traceback.print_exc()
 			return None
 
 	def cleanup(self):

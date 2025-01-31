@@ -111,10 +111,24 @@ class Controller:
 					break
 			if pid is None:
 				msg = f'Could not find {app_name} app in:\n {workspace.runningApplications()}'
-				print(msg)
+				logger.debug(msg)
 				return ActionResult(extracted_content=msg)
 			else:
 				return ActionResult(extracted_content=f'We opened the app {app_name}', current_app_pid=pid)
+
+		@self.registry.action(
+			'List running mac apps (returns localized name and bundle id)',
+			param_model=NoParamsAction,
+			requires_mac_builder=False
+		)
+		async def list_running_apps():
+			workspace = Cocoa.NSWorkspace.sharedWorkspace()
+			lines = []
+			for app in workspace.runningApplications():
+				lines.append(f"{app.localizedName()} => {app.bundleIdentifier()}")
+			output = "\n".join(lines)
+			# print(output)
+			return ActionResult(extracted_content=output)
 
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions
@@ -158,3 +172,9 @@ class Controller:
 			return ActionResult()
 		except Exception as e:
 			raise e
+
+class NoParamsAction(ActionModel):
+	"""
+	Simple parameter model requiring no arguments.
+	"""
+	pass

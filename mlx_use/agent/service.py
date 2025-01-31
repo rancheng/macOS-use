@@ -200,7 +200,7 @@ class Agent:
 		try:
 			# set new pid if last result has new pid loop over last result and get last pid
 			if not self.get_last_pid():
-				state = 'No open app you first need to open an app with open app action'
+				state = 'Starting new task - no app is currently open. Please use open_app action to begin.'
 
 			root = await self.mac_tree_builder.build_tree(self.get_last_pid())
 			if root:
