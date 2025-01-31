@@ -120,8 +120,8 @@ This project aimes to build the AI agent for the MLX by Apple framework that wou
 - [ ] Refine the Agent prompting.
 - [ ] Release the first working version to pypi.
 - [ ] Improve self-correction.
-- [ ] Adding ability to check which apps the machine has installed.
-- [ ] Add feature to allow the agent to check existing apps if failing, e.g. calendar app actual name is iCal.
+- [x] Adding ability to check which apps the machine has installed.
+- [x] Add feature to allow the agent to check existing apps if failing, e.g. calendar app actual name is iCal.
 - [ ] Add action for the agent to ask input from the user. 
 - [ ] Test Test Test! and let us know what and how to improve!
 - [ ] Make task cheaper and more efficient.
