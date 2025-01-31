@@ -123,6 +123,7 @@ This project aimes to build the AI agent for the MLX by Apple framework that wou
 - [ ] Add feature to allow the agent to check existing apps if failing, e.g. calendar app actual name is iCal.
 - [ ] Add action for the agent to ask input from the user. 
 - [ ] Test Test Test! and let us know what and how to improve!
+- [ ] Make task cheaper and more efficient.
 2. Support local inference with small fine tuned model.
 - [ ] Add support for inference with local models using mlx and mlx-vlm.
 - [ ] Fine tune a small model that every device can run inference with.
