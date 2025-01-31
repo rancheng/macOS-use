@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+---
+
+# Your rule content
+
+- You must never use Quartz package! it's un supprted and found maleware 
+- Only use updated python Packages!
