@@ -59,7 +59,7 @@ Install locally and you're good to go! try the first exmaple!
 <br>
 
 ```bash
-uv pip install --eitable . && pytohn examples/try.py
+uv pip install --editable . && python examples/try.py
 
 ```
 
