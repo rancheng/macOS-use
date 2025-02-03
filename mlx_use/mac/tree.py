@@ -27,7 +27,7 @@ from ApplicationServices import (
 	kAXErrorCannotComplete,
 	kAXErrorFailure,
 	kAXErrorIllegalArgument,
-	kAXErrorSuccess,  # Import kAXErrorSuccess
+	kAXErrorSuccess,
 	kAXMainWindowAttribute,
 	kAXRoleAttribute,
 	kAXTitleAttribute,
@@ -40,6 +40,131 @@ from .element import MacElementNode
 
 logger = logging.getLogger(__name__)
 
+# Constant list of AX attributes for enhanced UI tree details 
+AX_ATTRIBUTES = [
+	"AXARIAAtomic",
+	"AXARIALive",
+	"AXARIARelevant",
+	"AXActivationPoint",
+	"AXAlternateUIVisible",
+	"AXApplication",
+	"AXBlockQuoteLevel",
+	"AXButton",
+	"AXCaretBrowsingEnabled",
+	"AXCheckBox",
+	"AXChildrenInNavigationOrder",
+	"AXCloseButton",
+	"AXCodeStyleGroup",
+	"AXContainer",
+	"AXContent",
+	"AXContentList",
+	"AXContents",
+	"AXDOMClassList",
+	"AXDOMIdentifier",
+	"AXDescription",
+	"AXEditableAncestor",
+	"AXEdited",
+	"AXElementBusy",
+	"AXEmbeddedImageDescription",
+	"AXEmptyGroup",
+	"AXEnabled",
+	"AXEndTextMarker",
+	"AXFieldset",
+	"AXFocusableAncestor",
+	"AXFocused",
+	"AXFrame",
+	"AXFullScreen",
+	"AXFullScreenButton",
+	"AXGroup",
+	"AXHasDocumentRoleAncestor",
+	"AXHasPopup",
+	"AXHasWebApplicationAncestor",
+	"AXHeading",
+	"AXHelp",
+	"AXHighestEditableAncestor",
+	"AXHorizontalOrientation",
+	"AXHorizontalScrollBar",
+	"AXIdentifier",
+	"AXImage",
+	"AXInlineText",
+	"AXInsertionPointLineNumber",
+	"AXInvalid",
+	"AXLandmarkNavigation",
+	"AXLandmarkRegion",
+	"AXLanguage",
+	"AXLayoutCount",
+	"AXLink",
+	"AXLinkRelationshipType",
+	"AXLinkUIElements",
+	"AXLinkedUIElements",
+	"AXList",
+	"AXListMarker",
+	"AXLoaded",
+	"AXLoadingProgress",
+	"AXMain",
+	"AXMaxValue",
+	"AXMenuButton",
+	"AXMinValue",
+	"AXMinimizeButton",
+	"AXMinimized",
+	"AXModal",
+	"AXNextContents",
+	"AXNumberOfCharacters",
+	"AXOrientation",
+	"AXParent",
+	"AXPath",
+	"AXPlaceholderValue",
+	"AXPopUpButton",
+	"AXPosition",
+	"AXPreventKeyboardDOMEventDispatch",
+	"AXRadioButton",
+	"AXRelativeFrame",
+	"AXRequired",
+	"AXRoleDescription",
+	"AXScrollArea",
+	"AXScrollBar",
+	"AXSections",
+	"AXSegment",
+	"AXSelected",
+	"AXSelectedChildren",
+	"AXSelectedTextMarkerRange",
+	"AXSelectedTextRange",
+	"AXSize",
+	"AXSplitGroup",
+	"AXSplitter",
+	"AXSplitters",
+	"AXStandardWindow",
+	"AXStartTextMarker",
+	"AXStaticText",
+	"AXSubrole",
+	"AXTabButton",
+	"AXTabGroup",
+	"AXTabs",
+	"AXTextArea",
+	"AXTextField",
+	"AXTextMarker",
+	"AXTextMarkerRange",
+	"AXTitle",
+	"AXToggle",
+	"AXToolbar",
+	"AXTopLevelNavigator",
+	"AXTopLevelUIElement",
+	"AXUIElement",
+	"AXUIElementCopyAttributeNames",
+	"AXUIElementCreateApplication",
+	"AXURL",
+	"AXUnknown",
+	"AXValue",
+	"AXValueAutofillAvailable",
+	"AXVerticalOrientation",
+	"AXVerticalScrollBar",
+	"AXVisibleCharacterRange",
+	"AXVisibleChildren",
+	"AXVisited",
+	"AXWebArea",
+	"AXWindow",
+	"AXZoomButton",
+]
 
 class MacUITreeBuilder:
 	def __init__(self):
@@ -84,8 +209,9 @@ class MacUITreeBuilder:
 	) -> Optional[MacElementNode]:
 		"""Process a single UI element"""
 		element_identifier = str(element)
+		# Avoid processing the same element again
 		if element_identifier in self._processed_elements:
-			return None  # Avoid processing the same element again
+			return None 
 
 		self._processed_elements.add(element_identifier)
 
@@ -115,9 +241,18 @@ class MacUITreeBuilder:
 				node.attributes['description'] = description
 			node._element = element
 
+			# Fetch additional accessibility attributes from the full list
+			basic_attrs = {"AXRole", "AXTitle", "AXValue", "AXDescription", "AXEnabled"}
+			for attr in AX_ATTRIBUTES:
+				if attr in basic_attrs:
+					continue
+				additional_val = self._get_attribute(element, attr)
+				if additional_val is not None:
+					node.attributes[attr] = additional_val
+
 			actions = self._get_actions(element)
 
-			# Determine interactivity based on role and наличие actions
+			# Determine interactivity 
 			interactive_roles = ['AXButton', 'AXTextField', 'AXCheckBox', 'AXRadioButton', 'AXComboBox', 'AXMenuButton']
 			node.is_interactive = role in interactive_roles or bool(actions)
 
@@ -178,7 +313,6 @@ class MacUITreeBuilder:
 			)
 			root._element = app_ref
 
-			# Try to get the main window
 			logger.debug('Trying to get the main window...')
 			error, main_window_ref = AXUIElementCopyAttributeValue(app_ref, kAXMainWindowAttribute, None)
 			if error == kAXErrorSuccess and main_window_ref:

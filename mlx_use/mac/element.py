@@ -37,23 +37,6 @@ class MacElementNode:
 
         return role_str
 
-    @cached_property
-    def accessibility_path(self) -> str:
-        """Generate a unique path to this element"""
-        path_components = []
-        current = self
-        while current.parent is not None:
-            role = current.role
-            siblings = [s for s in current.parent.children if s.role == role]
-            if len(siblings) > 1:
-                idx = siblings.index(current) + 1
-                path_components.append(f"{role}[{idx}]")
-            else:
-                path_components.append(role)
-            current = current.parent
-        path_components.reverse()
-        return '/' + '/'.join(path_components)
-
     def get_clickable_elements_string(self) -> str:
         """Convert the UI tree to a string representation focusing on interactive elements"""
         formatted_text = []
@@ -72,6 +55,38 @@ class MacElementNode:
 
         process_node(self, 0)
         return '\n'.join(formatted_text)
+
+    def get_detailed_info(self) -> str:
+        """Return a detailed string with all attributes of the element"""
+        details = [f"Role: {self.role}", f"Identifier: {self.identifier}"]
+        for key, value in self.attributes.items():
+            details.append(f"{key}: {value}")
+        return ", ".join(details)
+
+    def get_detailed_string(self, indent: int = 0) -> str:
+        """Recursively build a detailed string representation of the UI tree"""
+        spaces = "  " * indent
+        result = f"{spaces}{self.__repr__()} - {self.get_detailed_info()}"
+        for child in self.children:
+            result += "\n" + child.get_detailed_string(indent + 1)
+        return result
+
+    @cached_property
+    def accessibility_path(self) -> str:
+        """Generate a unique path to this element"""
+        path_components = []
+        current = self
+        while current.parent is not None:
+            role = current.role
+            siblings = [s for s in current.parent.children if s.role == role]
+            if len(siblings) > 1:
+                idx = siblings.index(current) + 1
+                path_components.append(f"{role}[{idx}]")
+            else:
+                path_components.append(role)
+            current = current.parent
+        path_components.reverse()
+        return '/' + '/'.join(path_components)
 
     def find_element_by_path(self, path: str) -> Optional['MacElementNode']:
         """Find an element using its accessibility path"""

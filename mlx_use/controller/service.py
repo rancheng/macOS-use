@@ -127,7 +127,6 @@ class Controller:
 			for app in workspace.runningApplications():
 				lines.append(f"{app.localizedName()} => {app.bundleIdentifier()}")
 			output = "\n".join(lines)
-			# print(output)
 			return ActionResult(extracted_content=output)
 
 	def action(self, description: str, **kwargs):

@@ -189,22 +189,26 @@ class Agent:
 					latest_pid = r.current_app_pid
 		return latest_pid
 
-	@time_execution_async('--step')
+	@time_execution_async("--step")
 	async def step(self, step_info: Optional[AgentStepInfo] = None) -> None:
 		"""Execute one step of the task"""
-		logger.info(f'\n📍 Step {self.n_steps}')
+		logger.info(f"\n📍 Step {self.n_steps}")
 		state = None
 		model_output = None
 		result: list[ActionResult] = []
 
 		try:
-			# set new pid if last result has new pid loop over last result and get last pid
 			if not self.get_last_pid():
-				state = 'Starting new task - no app is currently open. Please use open_app action to begin.'
+				state = "Starting new task - no app is currently open. Please use open_app action to begin."
 
 			root = await self.mac_tree_builder.build_tree(self.get_last_pid())
 			if root:
 				state = root.get_clickable_elements_string()
+				# consider adding the full ui tree details, much more tokens!
+				# state = (
+				# 	"Interactive Elements:\n" + root.get_clickable_elements_string() +
+				# 	"\n\nFull UI Tree Details:\n" + root.get_detailed_string()
+				# )
 
 			self.message_manager.add_state_message(state, self._last_result, step_info)
 			input_messages = self.message_manager.get_messages()
@@ -216,10 +220,9 @@ class Agent:
 					self.register_new_step_callback(state, model_output, self.n_steps)
 
 				self._save_conversation(input_messages, model_output)
-				self.message_manager._remove_last_state_message()  # we dont want the whole state in the chat history
+				self.message_manager._remove_last_state_message()
 				self.message_manager.add_model_output(model_output)
 			except Exception as e:
-				# model call failed, remove last state message from history
 				self.message_manager._remove_last_state_message()
 				raise e
 
@@ -227,7 +230,7 @@ class Agent:
 			self._last_result = result
 
 			if len(result) > 0 and result[-1].is_done:
-				logger.info(f'📄 Result: {result[-1].extracted_content}')
+				logger.info(f"📄 Result: {result[-1].extracted_content}")
 
 			self.consecutive_failures = 0
 
@@ -243,7 +246,7 @@ class Agent:
 					step=self.n_steps,
 					actions=actions,
 					consecutive_failures=self.consecutive_failures,
-					step_error=[r.error for r in result if r.error] if result else ['No result'],
+					step_error=[r.error for r in result if r.error] if result else ["No result"],
 				)
 			)
 			if not result:
