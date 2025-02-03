@@ -64,6 +64,7 @@ INPUT STRUCTURE:
    [0] Button: Close
    [1] TextField: Search (submit)
 3. Previous Results: Outcomes of last executed actions
+NOTE: The UI tree now includes detailed accessibility attributes (e.g., AXARIAAtomic, AXARIALive, etc.) to improve element identification.
 """
 
     def get_system_message(self) -> SystemMessage:
