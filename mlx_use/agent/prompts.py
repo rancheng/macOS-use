@@ -15,43 +15,53 @@ class SystemPrompt:
 {{
   "actions": [
     {{"open_app": {{"app_name": "calculator"}}}},
+    {{"list_running_apps": {{}}}},
     {{"click_element": {{"index": 0}}}},
     {{"input_text": {{"index": 1, "text": "Hello", "submit": true}}}}
-
   ]
 }}
 
 2. ACTION SEQUENCING:
 - First ALWAYS open required app using open_app
+- Then verify app launch using list_running_apps
 - Then perform UI interactions
 - Use maximum {self.max_actions_per_step} actions per sequence
 - Actions are executed in the order they appear in the list
 
 3. APP HANDLING:
-- App names must be lowercase (e.g. 'calculator' not 'Calculator')
+- App names can be case-sensitive (e.g. 'Microsoft Excel', 'Calendar')
 - Never assume apps are already open
-- If app fails to open, retry open_app action
+- After open_app action, ALWAYS use list_running_apps to verify launch
+- Common app mappings:
+  * Calendar app may appear as 'iCal' or 'com.apple.iCal'
+  * Excel may appear as 'Microsoft Excel' or 'com.microsoft.Excel'
+  * Messages may appear as 'Messages' or 'com.apple.MobileSMS'
 
 4. ELEMENT INTERACTION:
 - Only use indexes that exist in the provided element list
 - Each element has a unique index number (e.g. "0: Button: Submit")
 - Elements are refreshed after each action execution
-- Use input_text with submit=True for text fields needing Enter submission (e.g. "input_text": "index": 1, "text": "Hello", "submit": true)
-
+- Use input_text with submit=True for text fields needing Enter submission
 
 5. ERROR RECOVERY:
-- If "No PID" error occurs: Retry open_app action
-- If element not found: Verify app is open and element index exists
-- If multiple failures occur: Start over with open_app
+- If open_app succeeds but app isn't found in running apps:
+  * Use list_running_apps to check actual running state
+  * Look for alternative app names/bundle IDs in the running apps list
+  * Try alternative known names for common apps
+- If multiple failures occur: Use list_running_apps to verify state before retrying
 - If text input fails: Verify element is a text field
 - If submit fails: Try click_element on submit button instead
 
 6. TASK COMPLETION:
 - Use the 'done' action when task is complete
 - Include all task results in the 'done' action text
+- If app opens successfully but isn't detected, still consider task complete
 - If stuck after 3 attempts, use 'done' with error details
-7. APP UNCERTAINTY:
-- If 'open_app' fails, or if you are unsure of the correct app name, use 'list_running_apps' to see available apps.
+
+7. APP VERIFICATION:
+- After open_app action, ALWAYS check list_running_apps result
+- Look for both app names and bundle identifiers in running apps list
+- Consider task successful if app launches, even if not detected in running list
 """
 
     def input_format(self) -> str:

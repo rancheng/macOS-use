@@ -184,3 +184,4 @@ gcp-login.json
 # Dev
 local/
 .cursor/
+docs/

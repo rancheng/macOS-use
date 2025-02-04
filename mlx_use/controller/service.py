@@ -89,35 +89,47 @@ class Controller:
 			return ActionResult(extracted_content=f'clicked element with index {index}')
 
 		@self.registry.action(
-			'Open a mac app always use lowercase',
+			'Open a mac app',
 			param_model=OpenAppAction
 		)
 		async def open_app(app_name: str):
 			workspace = Cocoa.NSWorkspace.sharedWorkspace()
-			app_name = app_name.lower()
-			print(f'\nLaunching {app_name} app...')
-			success = workspace.launchApplication_(app_name)
-			if not success:
-				print(f'❌ Failed to launch {app_name} app\n ending with {success}')
-				return
-			# Find Calculator app
+			print(f'\nLaunching app: {app_name}...')
+			success = workspace.launchApplication_(app_name) # Try launching as is first
+			if success:
+				print(f'✅ Launched app using name: {app_name}')
+			else:
+				print(f'❌ Failed to launch app with name: {app_name}. Trying lowercased...')
+				app_name_lower = app_name.lower() # Fallback to lowercased
+				success = workspace.launchApplication_(app_name_lower)
+				if success:
+					print(f'✅ Launched app using lowercased name: {app_name_lower}')
+				else:
+					print(f'❌ Failed to launch app with lowercased name: {app_name_lower}')
+					msg = f'Failed to launch app: {app_name} (and lowercased: {app_name_lower})'
+					logger.debug(msg)
+					return ActionResult(extracted_content=msg, error=msg) # Return error if both fail
+
+			if not success: # If still not successful after both attempts
+				return ActionResult(extracted_content=f'Failed to open app {app_name}')
+
 			await asyncio.sleep(1)  # Give it a moment to appear in running apps
 			pid = None
 			for app in workspace.runningApplications():
-				if app.bundleIdentifier() and app_name in app.bundleIdentifier().lower():
+				if app.bundleIdentifier() and app_name.lower() in app.bundleIdentifier().lower(): # keep lowercasing for bundle ID check for broader match
 					print(f'Bundle ID: {app.bundleIdentifier()}')
 					pid = app.processIdentifier()
 					print(f'PID: {pid}')
 					break
 			if pid is None:
-				msg = f'Could not find {app_name} app in:\n {workspace.runningApplications()}'
+				msg = f'Could not find running app with name: {app_name} in running applications.'
 				logger.debug(msg)
-				return ActionResult(extracted_content=msg)
+				return ActionResult(extracted_content=msg, error=msg) # Return error if PID not found
 			else:
 				return ActionResult(extracted_content=f'We opened the app {app_name}', current_app_pid=pid)
 
 		@self.registry.action(
-			'List running mac apps (returns localized name and bundle id)',
+			'List running mac apps (returns localized name, bundle id, and app path)',
 			param_model=NoParamsAction,
 			requires_mac_builder=False
 		)
@@ -125,7 +137,8 @@ class Controller:
 			workspace = Cocoa.NSWorkspace.sharedWorkspace()
 			lines = []
 			for app in workspace.runningApplications():
-				lines.append(f"{app.localizedName()} => {app.bundleIdentifier()}")
+				app_path = app.bundleURL().path if app.bundleURL() else "Path not available" # Get app path
+				lines.append(f"{app.localizedName()} => {app.bundleIdentifier()} => Path: {app_path}")
 			output = "\n".join(lines)
 			return ActionResult(extracted_content=output)
 
