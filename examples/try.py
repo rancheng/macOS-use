@@ -40,7 +40,7 @@ llm = set_llm('OAI')
 
 
 controller = Controller()
-task ="open the file demo in excel app"
+task = input("Hi there! What can I do for you today? ")
 
 agent = Agent(
 	task=task,
