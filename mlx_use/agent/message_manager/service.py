@@ -180,6 +180,7 @@ class MessageManager:
 	def _count_text_tokens(self, text: str) -> int:
 		if isinstance(self.llm, ChatOpenAI):
 			try:
+				self.llm.disabled_params = {'parallel_tool_calls': None}
 				tokens = self.llm.get_num_tokens(text)
 			except Exception:
 				tokens = len(text) // self.ESTIMATED_TOKENS_PER_CHARACTER
