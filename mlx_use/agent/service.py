@@ -215,7 +215,6 @@ class Agent:
 
 			try:
 				model_output = await self.get_next_action(input_messages)
-				logger.info(f"\n📄 Model output: {model_output}\n")
 
 				if self.register_new_step_callback:
 					self.register_new_step_callback(state, model_output, self.n_steps)
