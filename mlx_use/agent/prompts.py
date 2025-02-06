@@ -113,6 +113,7 @@ NOTE: The UI tree now includes detailed accessibility attributes (e.g., AXARIAAt
 5. Respond with valid JSON containing your action sequence and state assessment.
 6. Always use the actions as if you were a human interacting with the app.
 7. Only rely on the ui tree elements data to provide the best possible response.
+8. Ensure the final state of the application matches the expected outcome before declaring the task complete.
 Current time: {time_str}
 
 {self.input_format()}

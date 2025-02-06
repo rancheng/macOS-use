@@ -253,7 +253,7 @@ class MacUITreeBuilder:
 			actions = self._get_actions(element)
 
 			# Determine interactivity 
-			interactive_roles = ['AXButton', 'AXTextField', 'AXCheckBox', 'AXRadioButton', 'AXComboBox', 'AXMenuButton']
+			interactive_roles = ['AXButton', 'AXTextField', 'AXCheckBox', 'AXRadioButton', 'AXComboBox', 'AXMenuButton', 'AXTextArea', 'AXPopUpButton']
 			node.is_interactive = role in interactive_roles or bool(actions)
 
 			if node.is_interactive:
