@@ -101,7 +101,7 @@ python examples/login_to_auth0.py
 [prompt](https://github.com/browser-use/macOS-use/blob/main/examples/check_time_online.py): Can you check what hour is Shabbat in israel today? call done when you finish. 
 
 ```bash
-python exmaples/check_time_online.py
+python examples/check_time_online.py
 ```
 <br>
 
