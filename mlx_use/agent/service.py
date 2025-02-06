@@ -198,25 +198,24 @@ class Agent:
 		result: list[ActionResult] = []
 
 		try:
+			if not self.get_last_pid():
+				state = "Starting new task - no app is currently open. Please use open_app action to begin."
+
 			root = await self.mac_tree_builder.build_tree(self.get_last_pid())
 			if root:
 				state = root.get_clickable_elements_string()
-			else:
-				state = "Starting new task - no app is currently open. Please use open_app action to begin."
+				# consider adding the full ui tree details, much more tokens!
+				# state = (
+				# 	"Interactive Elements:\n" + root.get_clickable_elements_string() +
+				# 	"\n\nFull UI Tree Details:\n" + root.get_detailed_string()
+				# )
 
-			# Add initial state message before calling LLM
 			self.message_manager.add_state_message(state, self._last_result, step_info)
 			input_messages = self.message_manager.get_messages()
 
 			try:
 				model_output = await self.get_next_action(input_messages)
-
-				# If the model output includes a current_state, update our state variable accordingly.
-				if model_output.current_state:
-					cs = model_output.current_state
-					state = (f"Evaluation: {cs.evaluation_previous_goal}\n"
-							 f"Memory: {cs.memory}\n"
-							 f"Next Goal: {cs.next_goal}")
+				logger.info(f"\n📄 Model output: {model_output}\n")
 
 				if self.register_new_step_callback:
 					self.register_new_step_callback(state, model_output, self.n_steps)
@@ -254,7 +253,8 @@ class Agent:
 			if not result:
 				return
 
-			self._make_history_item(model_output, state, result)
+			if state:
+				self._make_history_item(model_output, state, result)
 
 	async def _handle_step_error(self, error: Exception) -> list[ActionResult]:
 		"""Handle all types of errors that can occur during a step"""

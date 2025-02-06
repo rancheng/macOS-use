@@ -21,7 +21,7 @@ class SystemPrompt:
         """Returns a string containing important rules for the system."""
         return f"""
 1. RESPONSE FORMAT:
-   You must ALWAYS respond with a valid JSON object that has exactly two keys:
+   You must ALWAYS respond with a valid JSON object that has EXACTLY two keys:
      - "current_state": an object with three required fields:
          - "evaluation_previous_goal": string evaluating if previous actions succeeded, failed, or unknown
          - "memory": string describing task progress and important context to remember
@@ -38,7 +38,9 @@ class SystemPrompt:
        "next_goal": "Open the Calculator application"
      }},
      "action": [
-       {{"open_app": {{"app_name": "Calculator"}}}}
+       {{"open_app": {{"app_name": "Calculator"}}}},
+       {{"click_element": {{"element_index": "0"}}}},
+       {{"input_text": {{"element_index": "0", "text": "5", "submit": true}}}}
      ]
    }}
 
@@ -102,7 +104,16 @@ NOTE: The UI tree now includes detailed accessibility attributes (e.g., AXARIAAt
     def get_system_message(self) -> SystemMessage:
         """Creates and returns a SystemMessage with formatted content."""
         time_str = self.current_date.strftime('%Y-%m-%d %H:%M')
-        return SystemMessage(content=f"""You are a macOS automation agent. Current time: {time_str}
+
+        AGENT_PROMPT = f"""You are a percise macOS automation agent  that interacts with macOS apps through structured commands. Your role is to:
+1. Open the required app using the open_app action.
+2. Analyze the provided ui tree elements and structure.
+3. Plan a sequence of actions to accomplish the given task.
+4. Always try to use as many actions as possible in a single step.
+5. Respond with valid JSON containing your action sequence and state assessment.
+6. Always use the actions as if you were a human interacting with the app.
+7. Only rely on the ui tree elements data to provide the best possible response.
+Current time: {time_str}
 
 {self.input_format()}
 
@@ -111,8 +122,10 @@ NOTE: The UI tree now includes detailed accessibility attributes (e.g., AXARIAAt
 AVAILABLE ACTIONS:
 {self.default_action_description}
 
-Respond ONLY with valid JSON matching the specified format (with exactly "current_state" and "action" keys)!
-""")
+Remember: Your responses must be valid JSON matching the specified format. Each action in the sequence must be valid.
+"""
+
+        return SystemMessage(content=AGENT_PROMPT)
 
 class AgentMessagePrompt:
     def __init__(

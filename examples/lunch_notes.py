@@ -1,34 +1,52 @@
-import asyncio
 import os
 import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from dotenv import load_dotenv
+from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
-from pydantic import SecretStr
+
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import argparse
+import asyncio
 
 from mlx_use import Agent
-
-load_dotenv()
-api_key = os.getenv('GEMINI_API_KEY')
-if not api_key:
-	raise ValueError('GEMINI_API_KEY is not set')
-
-llm = ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp', api_key=SecretStr(api_key))
+from pydantic import SecretStr
+from mlx_use.controller.service import Controller
 
 
-async def run_search():
-	agent = Agent(
-		task=(
-			'Go to url r/LocalLLaMA subreddit and search for "browser use" in the search bar and click on the first post and find the funniest comment'
-		),
-		llm=llm,
-		max_actions_per_step=4,
-		tool_call_in_content=False,
-	)
+def set_llm(llm_provider:str = None):
+	if not llm_provider:
+		raise ValueError("No llm provider was set")
+	
+	if llm_provider == "OAI":
+		api_key = os.getenv('OPENAI_API_KEY')
+		return ChatOpenAI(model='gpt-4o', api_key=SecretStr(api_key))
+	
+	if llm_provider == "google":
+		api_key = os.getenv('GEMINI_API_KEY')
+		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp',  api_key=SecretStr(api_key))
+	
+llm = set_llm('google')
+llm = set_llm('OAI')
 
+
+controller = Controller()
+
+task = 'open the notes app and create a new folder called "Lunch"'
+
+
+agent = Agent(
+	task=task,
+	llm=llm,
+	controller=controller,
+	use_vision=False,
+	max_actions_per_step=1,
+)
+
+
+async def main():
 	await agent.run(max_steps=25)
 
 
-if __name__ == '__main__':
-	asyncio.run(run_search())
+asyncio.run(main())
