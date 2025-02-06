@@ -2,7 +2,14 @@
 import logging
 
 import Cocoa
-from ApplicationServices import AXUIElementPerformAction, AXUIElementSetAttributeValue, kAXPressAction, kAXValueAttribute, kAXConfirmAction
+from ApplicationServices import (
+	AXUIElementPerformAction, 
+	AXUIElementSetAttributeValue, 
+	kAXPressAction, 
+	kAXValueAttribute, 
+	kAXConfirmAction,
+	AXUIElementCopyActionNames
+)
 from Foundation import NSString
 
 from mlx_use.mac.element import MacElementNode
@@ -69,3 +76,41 @@ def type_into(element: MacElementNode, text: str, submit: bool = False) -> bool:
     except Exception as e:
         logger.error(f'❌ Error typing into element: {element}, {e}')
         return False
+
+def right_click(element: MacElementNode) -> bool:
+	"""Simulates a right-click on a Mac UI element, attempting to trigger the context menu.
+	
+	It first checks whether the element supports the "AXShowMenu" action (commonly used
+	to display a contextual menu). If available, the action is performed. Otherwise, the
+	function falls back to a standard left-side click.
+	"""
+	try:
+		if not element._element:
+			logger.error(f'❌ Cannot right click: Element reference is missing for {element}')
+			return False
+
+		# Retrieve the supported actions for this element
+		try:
+			actions = AXUIElementCopyActionNames(element._element)
+		except Exception as e:
+			logger.error(f"Exception retrieving action names for right click: {e}")
+			actions = []
+			
+		# Define the constant as generic and not app-specific
+		kAXRightClickAction = "AXShowMenu"
+		
+		if actions and kAXRightClickAction in actions:
+			result = AXUIElementPerformAction(element._element, kAXRightClickAction)
+			if result == 0:
+				logger.info(f"✅ Successfully right clicked on element: {element}")
+				return True
+			else:
+				logger.error(f"❌ Failed right clicking on element: {element}, error code: {result}")
+				return False
+		else:
+			logger.warning("Element does not support the right click (AXShowMenu) action; falling back to standard click")
+			# As a fallback, perform a normal click.
+			return click(element)
+	except Exception as e:
+		logger.error(f"❌ Exception during right click on element: {element}: {e}")
+		return False

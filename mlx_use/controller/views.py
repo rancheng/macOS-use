@@ -16,6 +16,9 @@ class InputTextAction(BaseModel):
 class ClickElementAction(BaseModel):
 	index: int
 
+class RightClickElementAction(BaseModel):
+	index: int
+
 class OpenAppAction(BaseModel):
 	app_name: str
 

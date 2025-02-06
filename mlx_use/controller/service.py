@@ -11,9 +11,10 @@ from mlx_use.controller.views import (
 	DoneAction,
 	InputTextAction,
 	ClickElementAction,
-	OpenAppAction
+	OpenAppAction,
+	RightClickElementAction
 )
-from mlx_use.mac.actions import click, type_into
+from mlx_use.mac.actions import click, type_into, right_click
 from mlx_use.mac.tree import MacUITreeBuilder
 from mlx_use.utils import time_execution_async, time_execution_sync
 
@@ -87,6 +88,29 @@ class Controller:
 				print(f'❌ An error occurred: {e}')
 
 			return ActionResult(extracted_content=f'clicked element with index {index}')
+		
+		@self.registry.action(
+			'Right click element',
+			param_model=RightClickElementAction,
+			requires_mac_builder=True
+		)
+		async def right_click_element(index: int, mac_tree_builder: MacUITreeBuilder):
+			logger.info(f'Right clicking element {index}')
+			try:
+				if index in mac_tree_builder._element_cache:
+					element_to_right_click = mac_tree_builder._element_cache[index]
+					print(f'Attempting to right click: {element_to_right_click}')
+					right_click_successful = right_click(element_to_right_click)
+					if right_click_successful:
+						print('✅ Right click successful!')
+					else:
+						print('❌ Right click failed.')
+				else:
+					print('❌ Invalid index.')
+			except Exception as e:
+				print(f'❌ An error occurred: {e}')
+
+			return ActionResult(extracted_content=f'right clicked element with index {index}')
 
 		@self.registry.action(
 			'Open a mac app',
