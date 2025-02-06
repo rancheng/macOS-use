@@ -21,7 +21,7 @@ def set_llm(llm_provider:str = None):
 	
 	if llm_provider == "OAI":
 		api_key = os.getenv('OPENAI_API_KEY')
-		return ChatOpenAI(model='gpt-4o', api_key=SecretStr(api_key))
+		return ChatOpenAI(model='o3-mini', api_key=SecretStr(api_key))
 	
 	if llm_provider == "google":
 		api_key = os.getenv('GEMINI_API_KEY')
@@ -34,7 +34,7 @@ llm = set_llm('OAI')
 controller = Controller()
 
 
-task = 'Can you check what hour is Shabbat in israel today? call done when you finish.'
+task = 'Can you check what hour is Shabbat in israel this week? call done when you finish.'
 
 
 agent = Agent(

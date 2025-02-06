@@ -77,8 +77,8 @@ class SystemPrompt:
 
 6. TASK COMPLETION:
    - Use the "done" action when the task is complete.
+   - Don't hallucinate actions.
    - Include all task results in the "done" action text.
-   - Even if the app isn't detected in running apps but opens successfully, consider the task complete.
    - If stuck after 3 attempts, use "done" with error details.
 
 7. APP VERIFICATION:
