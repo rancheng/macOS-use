@@ -8,12 +8,9 @@
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OfirOzeri?style=social)](https://x.com/OfirOzeri)
 
-<br>
-
-<div align="center">
-  <h2><a href="#our-vision">Tell your MacBook what to do, and it's done—across EVERY app.</a><br>
-  Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri </a><br> 
-   </h2>
+<div align="">
+  <h2>Tell your MacBook what to do, and it's done—across ANY app.</h2>
+  Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri ♥️</a><br> 
 </div>
 <br>
 
