@@ -10,7 +10,7 @@
 
 <div align="">
   <h2>Tell your MacBook what to do, and it's done—across ANY app.</h2>
-  Created by <a href="https://github.com/eDeveloperOZ">Ofir Ozeri ♥️</a><br> 
+  Created by <a href="https://x.com/OfirOzeri">Ofir Ozeri </a>♥️ migrated in collaboration with <a href="https://x.com/mamagnus00">Magnus</a> and <a href="https://x.com/gregpr07">Gregor</a><br> 
 </div>
 <br>
 
