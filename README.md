@@ -7,6 +7,8 @@
 [![GitHub stars](https://img.shields.io/github/stars/browser-use/macOS-use?style=social)](https://github.com/browser-use/macOS-use/stargazers)
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OfirOzeri?style=social)](https://x.com/OfirOzeri)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Gregor?style=social)](https://x.com/gregpr07)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Magnus?style=social)](https://x.com/mamagnus00)
 
 <div align="center">
   <h2>Tell your MacBook what to do, and it's done—across ANY app.</h2>
