@@ -8,7 +8,7 @@
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OfirOzeri?style=social)](https://x.com/OfirOzeri)
 
-<div align="">
+<div align="center">
   <h2>Tell your MacBook what to do, and it's done—across ANY app.</h2>
   Created by <a href="https://x.com/OfirOzeri">Ofir Ozeri </a>♥️ migrated in collaboration with <a href="https://x.com/mamagnus00">Magnus</a> and <a href="https://x.com/gregpr07">Gregor</a><br> 
 </div>
