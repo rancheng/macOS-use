@@ -40,18 +40,8 @@ llm = set_llm('OAI')
 
 
 controller = Controller()
-task = '''Open the demo file in Excel and perform the following:
-
-1. Look at cell A2 and note its value
-2. For each row in the spreadsheet:
-   - Check if column B contains 'NY'
-   - Check if column A matches the value from cell A2
-   - If BOTH conditions are true, include that row's value from column C in the sum
-3. Put the final sum in column D
-
-In other words, sum column C values only when:
-- Column B = 'NY' AND
-- Column A = [value in cell A2]
+task = '''
+open up the excel file called demo and add up all the numbers in column C, but only include them in the sum if the corresponding row in column B contains 'NY' AND the corresponding row in column A matches whatever value is in cell A2.
 '''
 
 agent = Agent(
