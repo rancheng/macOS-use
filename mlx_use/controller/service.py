@@ -1,6 +1,8 @@
 import asyncio
 import json
 import logging
+from typing import Literal
+import subprocess
 
 import Cocoa
 from playwright.async_api import Page
@@ -12,7 +14,8 @@ from mlx_use.controller.views import (
 	InputTextAction,
 	ClickElementAction,
 	OpenAppAction,
-	RightClickElementAction
+	RightClickElementAction,
+	AppleScriptAction
 )
 from mlx_use.mac.actions import click, type_into, right_click
 from mlx_use.mac.tree import MacUITreeBuilder
@@ -155,7 +158,20 @@ class Controller:
 					return ActionResult(extracted_content=msg, error=msg) # Return error if PID not found
 			else:
 				return ActionResult(extracted_content=f'We opened the app {app_name}', current_app_pid=pid)
-
+			
+		@self.registry.action(
+			'Run a AppleScript',
+			param_model=AppleScriptAction
+		)
+		async def run_apple_script(script: str):
+			logger.info(f'Running AppleScript: {script}')
+			try:
+				subprocess.run(['osascript', '-e', script])
+				return ActionResult(extracted_content=f'Successfully ran AppleScript: {script}')
+			except Exception as e:
+				error_msg = f'Failed to run AppleScript: {str(e)}'
+				logger.error(error_msg)
+				return ActionResult(extracted_content=error_msg, error=error_msg)
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions
 

@@ -22,6 +22,9 @@ class RightClickElementAction(BaseModel):
 class OpenAppAction(BaseModel):
 	app_name: str
 
+class AppleScriptAction(BaseModel):
+	script: str
+
 # # Action Input Models
 # class SearchGoogleAction(BaseModel):
 # 	query: str

@@ -74,6 +74,18 @@ class SystemPrompt:
    - Include all task results in the "done" action text.
    - If stuck after 3 attempts, use "done" with error details.
 
+7. APPLESCRIPT SUPPORT:
+   - You can execute AppleScript commands using the run_apple_script action.
+   - Use this for complex operations not possible through UI interactions.
+   - AppleScript format: {{"run_apple_script": {{"script": "your AppleScript code here"}}}}
+   - Common AppleScript examples:
+       * Text to speech: {{"run_apple_script": {{"script": "say \\"Hello World\\""}}}}
+       * Create folder: {{"run_apple_script": {{"script": "tell application \\"Notes\\" to create folder \\"My Folder\\""}}}}
+       * Get app info: {{"run_apple_script": {{"script": "tell application \\"System Events\\" to get name of every process"}}}}
+       * Preform some excel formula: {{"run_apple_script": {{"script": "tell application \\"Microsoft Excel\\" to calculate \\"=SUMIFS(C:C, B:B, \\"NY\\", A:A, \\"=A2\\")"}}}}
+   - Only use AppleScript when standard UI interactions are insufficient.
+   - Ensure AppleScript commands are properly escaped with double quotes.
+   - For text-to-speech tasks, always use the "say" command through AppleScript.
 
 """
 
