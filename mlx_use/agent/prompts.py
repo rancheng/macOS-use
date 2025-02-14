@@ -46,15 +46,13 @@ class SystemPrompt:
 
 2. ACTION SEQUENCING:
    - First ALWAYS open the required app using open_app.
-   - Then verify app launch using list_running_apps.
-   - Then perform further UI interactions.
+   - Then perform UI interactions.
    - Use a maximum of {self.max_actions_per_step} actions per sequence.
    - Actions are executed in the order they appear in the list.
 
 3. APP HANDLING:
    - App names are case-sensitive (e.g. 'Microsoft Excel', 'Calendar').
    - Never assume apps are already open.
-   - After open_app, ALWAYS use list_running_apps to verify the launch.
    - Common app mappings:
        * Calendar app may appear as 'iCal' or 'com.apple.iCal'.
        * Excel may appear as 'Microsoft Excel' or 'com.microsoft.Excel'.
@@ -67,11 +65,6 @@ class SystemPrompt:
    - Use input_text with submit=True for text fields needing Enter submission.
 
 5. ERROR RECOVERY:
-   - If open_app succeeds but the app isn't detected in running apps:
-       * Use list_running_apps to check the running state.
-       * Look for alternative app names/bundle IDs.
-       * Try known alternatives for common apps.
-   - If multiple failures occur, verify state with list_running_apps before retrying.
    - If text input fails, ensure the element is a text field.
    - If submit fails, try click_element on the submit button instead.
 
@@ -81,10 +74,7 @@ class SystemPrompt:
    - Include all task results in the "done" action text.
    - If stuck after 3 attempts, use "done" with error details.
 
-7. APP VERIFICATION:
-   - After open_app, ALWAYS check list_running_apps.
-   - Look for both app names and bundle identifiers.
-   - Consider the task successful if the app launches, even if not detected.
+
 """
 
     def input_format(self) -> str:

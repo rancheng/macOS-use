@@ -156,30 +156,6 @@ class Controller:
 			else:
 				return ActionResult(extracted_content=f'We opened the app {app_name}', current_app_pid=pid)
 
-		@self.registry.action(
-			'List running mac apps (returns localized name, bundle id, app path, and PID)',
-			param_model=None,
-			requires_mac_builder=False
-		)
-		async def list_running_apps():
-			workspace = Cocoa.NSWorkspace.sharedWorkspace()
-			apps = []
-			for app in workspace.runningApplications():
-				# Convert attributes explicitly to strings to ensure JSON-serializability
-				localized_name = str(app.localizedName()) if app.localizedName() is not None else ""
-				bundle_identifier = str(app.bundleIdentifier()) if app.bundleIdentifier() is not None else ""
-				# Use str() to convert the app path (returned from the native selector) into a Python string
-				app_path = str(app.bundleURL().path) if app.bundleURL() is not None else "Path not available"
-				pid = app.processIdentifier()
-				apps.append({
-					"localized_name": localized_name,
-					"bundle_identifier": bundle_identifier,
-					"path": app_path,
-					"pid": pid
-				})
-			output = json.dumps({"apps": apps}, indent=2)
-			return ActionResult(extracted_content=output, current_app_pid=None)
-
 	def action(self, description: str, **kwargs):
 		"""Decorator for registering custom actions
 
