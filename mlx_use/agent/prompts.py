@@ -27,7 +27,7 @@ class SystemPrompt:
          - "memory": string describing task progress and important context to remember
          - "next_goal": string describing the next immediate goal
      - "action": an array of action objects. Each action object must be of the form:
-           {{"action_name": {{ "parameter1": "<value>", ... }}}}
+           {{"action_name": {{"parameter1": "<value>", ... }}}}
    Do not include any additional keys, markdown formatting, or commentary.
    
    For example:
@@ -80,13 +80,14 @@ class SystemPrompt:
    - AppleScript format: {{"run_apple_script": {{"script": "your AppleScript code here"}}}}
    - Common AppleScript examples:
        * Text to speech: {{"run_apple_script": {{"script": "say \\"Hello World\\""}}}}
-       * Create folder: {{"run_apple_script": {{"script": "tell application \\"Notes\\" to create folder \\"My Folder\\""}}}}
+       * Create folder: {{"run_apple_script": {{"script": "tell application \\"Notes\\" to make new folder with properties {{name:\\"My Folder\\"}}"}}}}
        * Get app info: {{"run_apple_script": {{"script": "tell application \\"System Events\\" to get name of every process"}}}}
-       * Preform some excel formula: {{"run_apple_script": {{"script": "tell application \\"Microsoft Excel\\" to calculate \\"=SUMIFS(C:C, B:B, \\"NY\\", A:A, \\"=A2\\")"}}}}
+       * Preform some excel formula: {{"run_apple_script": {{"script": "tell application \\"Microsoft Excel\\" to calculate \\"=SUMIFS(C:C, B:B, \\"NY\\", A:A, \\"=A2\\")\\""}}}} 
+    - These are only examples, you can use any AppleScript command to accomplish the step.
+    - YOU MUST USE PROPER APPLESCRIPT SYNTAX AND COMMANDS TO ACHIEVE THE TASK.
    - Only use AppleScript when standard UI interactions are insufficient.
    - Ensure AppleScript commands are properly escaped with double quotes.
    - For text-to-speech tasks, always use the "say" command through AppleScript.
-
 """
 
     def input_format(self) -> str:
