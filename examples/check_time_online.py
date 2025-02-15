@@ -34,7 +34,7 @@ llm = set_llm('OAI')
 controller = Controller()
 
 
-task = 'Can you check what hour is Shabbat in israel this week? call done when you finish.'
+task = 'Can you check online what hour is Shabbat in israel this week? call done when you finish.'
 
 
 agent = Agent(

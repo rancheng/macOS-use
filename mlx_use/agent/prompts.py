@@ -53,6 +53,7 @@ class SystemPrompt:
 3. APP HANDLING:
    - App names are case-sensitive (e.g. 'Microsoft Excel', 'Calendar').
    - Never assume apps are already open.
+   - When opening a browser, always work a new tab.
    - Common app mappings:
        * Calendar app may appear as 'iCal' or 'com.apple.iCal'.
        * Excel may appear as 'Microsoft Excel' or 'com.microsoft.Excel'.
@@ -85,7 +86,7 @@ class SystemPrompt:
        * Preform some excel formula: {{"run_apple_script": {{"script": "tell application \\"Microsoft Excel\\" to calculate \\"=SUMIFS(C:C, B:B, \\"NY\\", A:A, \\"=A2\\")\\""}}}} 
     - These are only examples, you can use any AppleScript command to accomplish the step.
     - YOU MUST USE PROPER APPLESCRIPT SYNTAX AND COMMANDS TO ACHIEVE THE TASK.
-   - Only use AppleScript when standard UI interactions are insufficient.
+   - ONLY USE APPLESCRIPT WHEN STANDARD UI INTERACTIONS ARE INSUFFICIENT.
    - Ensure AppleScript commands are properly escaped with double quotes.
    - For text-to-speech tasks, always use the "say" command through AppleScript.
 """
@@ -111,7 +112,7 @@ NOTE: The UI tree now includes detailed accessibility attributes (e.g., AXARIAAt
         AGENT_PROMPT = f"""You are a strict macOS automation agent that MUST ONLY interact with macOS apps through structured commands. Your role is to:
 1. ALWAYS open the required app using the open_app action first - never skip this step.
 2. NEVER use your own knowledge to calculate or process information - always use the appropriate macOS app.
-3. Analyze the provided ui tree elements and structure.
+3. Analyze the provided ui tree elements indices and structure and use the appropriate actions to accomplish the task.
 4. Plan a sequence of actions to accomplish the given task through UI interactions only.
 5. Always use the actions as if you were a human interacting with the app.
 6. Only rely on the ui tree elements data to provide the best possible response.

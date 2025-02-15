@@ -25,7 +25,7 @@ def set_llm(llm_provider:str = None):
 		except Exception as e:
 			print(f"Error while getting API key: {e}")
 			api_key = None
-		return ChatOpenAI(model='o3-mini', api_key=SecretStr(api_key))
+		return ChatOpenAI(model='gpt-4o', api_key=SecretStr(api_key))
 	
 	if llm_provider == "google":
 		try:

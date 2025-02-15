@@ -171,13 +171,30 @@ class MacUITreeBuilder:
 		self.highlight_index = 0
 		self._element_cache = {}
 		self._observers = {}
-		self._processed_elements = set()  # To avoid infinite recursion
-
+		self._processed_elements = set()
 		self._current_app_pid = None
+		self.max_depth = 10
+		self.max_children = 50
 
-		# Add limits to avoid processing too many nodes
-		self.max_depth = 10         # maximum recursion depth
-		self.max_children = 50      # maximum children per node to process
+		# Define interactive actions we care about
+		self.INTERACTIVE_ACTIONS = {
+			'AXPress',            # Most buttons and clickable elements
+			'AXShowMenu',         # Menu buttons
+			'AXIncrement',        # Spinners/steppers
+			'AXDecrement',
+			'AXConfirm',         # Dialogs
+			'AXCancel',
+			'AXRaise',           # Windows
+			'AXSetValue'         # Text fields/inputs
+		}
+
+		# Actions that require scrolling
+		self.SCROLL_ACTIONS = {
+			'AXScrollLeftByPage',
+			'AXScrollRightByPage',
+			'AXScrollUpByPage',
+			'AXScrollDownByPage'
+		}
 
 	def _setup_observer(self, pid: int) -> bool:
 		"""Setup accessibility observer for an application"""
@@ -200,58 +217,82 @@ class MacUITreeBuilder:
 			return None
 
 	def _get_actions(self, element: 'AXUIElement') -> List[str]:
-		"""Get available actions for an element"""
+		"""Get available actions for an element with proper error handling"""
 		try:
-			actions = AXUIElementCopyActionNames(element, None)
-			return actions
+			error, actions = AXUIElementCopyActionNames(element, None)
+			if error == kAXErrorSuccess and actions:
+				# Convert NSArray to Python list
+				return list(actions)
+			return []
 		except Exception as e:
-			print(f'Error getting actions: {e}')
+			logger.debug(f'Error getting actions: {e}')
 			return []
 
-	async def _process_element(
-		self, element: 'AXUIElement', pid: int, parent: Optional[MacElementNode] = None, depth: int = 0
-	) -> Optional[MacElementNode]:
+	def _is_interactive(self, element: 'AXUIElement', role: str, actions: List[str]) -> bool:
+		"""Determine if an element is truly interactive based on its role and actions."""
+		if not actions:
+			return False
+
+		# Check if element has any interactive actions
+		has_interactive = any(action in self.INTERACTIVE_ACTIONS for action in actions)
+		has_scroll = any(action in self.SCROLL_ACTIONS for action in actions)
+		
+		# Special handling for text input fields
+		if 'AXSetValue' in actions:
+			enabled = self._get_attribute(element, 'AXEnabled')
+			return bool(enabled)
+
+		# Special handling for buttons with AXPress
+		if 'AXPress' in actions and role == 'AXButton':
+			enabled = self._get_attribute(element, 'AXEnabled')
+			return bool(enabled)
+
+		return has_interactive or has_scroll
+
+	async def _process_element(self, element: 'AXUIElement', pid: int, parent: Optional[MacElementNode] = None, depth: int = 0) -> Optional[MacElementNode]:
 		"""Process a single UI element"""
 		element_identifier = str(element)
 		
-		# Add debug logging
-		logger.debug(f'Processing element: {element_identifier}')
-		
-		# Avoid processing the same element again
 		if element_identifier in self._processed_elements:
-			logger.debug(f'Skipping already processed element: {element_identifier}')
-			return None 
+			return None
 
 		self._processed_elements.add(element_identifier)
 
 		try:
-			# Add debug logging for attribute fetching
-			logger.debug('Fetching basic attributes...')
 			role = self._get_attribute(element, kAXRoleAttribute)
-			logger.debug(f'Role: {role}')
-			
 			if not role:
-				logger.debug('No role found, skipping element')
 				return None
 
-			# Create node with basic attributes first
+			# Get all possible attributes and actions
+			actions = self._get_actions(element)
+			
+			# Create node with enhanced attributes
 			node = MacElementNode(
 				role=role,
 				identifier=element_identifier,
 				attributes={},
-				is_visible=True,  # Default to visible
+				is_visible=True,
 				parent=parent,
 				app_pid=pid,
 			)
 			node._element = element
 
-			# Fetch other attributes with logging
-			logger.debug('Fetching additional attributes...')
+			# Store the actions in the node's attributes for reference
+			if actions:
+				node.attributes['actions'] = actions
+
+			# Get basic attributes
 			title = self._get_attribute(element, kAXTitleAttribute)
 			value = self._get_attribute(element, kAXValueAttribute)
 			description = self._get_attribute(element, kAXDescriptionAttribute)
 			is_enabled = self._get_attribute(element, 'AXEnabled')
+			
+			# Additional useful attributes
+			position = self._get_attribute(element, 'AXPosition')
+			size = self._get_attribute(element, 'AXSize')
+			subrole = self._get_attribute(element, 'AXSubrole')
 
+			# Update node attributes
 			if title:
 				node.attributes['title'] = title
 			if value:
@@ -260,56 +301,34 @@ class MacUITreeBuilder:
 				node.attributes['description'] = description
 			if is_enabled is not None:
 				node.is_visible = bool(is_enabled)
+				node.attributes['enabled'] = bool(is_enabled)
+			if position:
+				node.attributes['position'] = position
+			if size:
+				node.attributes['size'] = size
+			if subrole:
+				node.attributes['subrole'] = subrole
 
-			# Determine interactivity with more specific logging
-			actions = self._get_actions(element)
-			logger.debug(f'Available actions: {actions}')
-
-			# Update interactive roles list and add logging
-			interactive_roles = [
-				'AXButton', 'AXTextField', 'AXCheckBox', 'AXRadioButton', 
-				'AXComboBox', 'AXMenuButton', 'AXTextArea', 'AXPopUpButton'
-				]
-  
-			# If the role is AXCell and it's a child of an AXRow,
-			# skip marking it as interactive to avoid processing too many table cells.
-			if role == "AXCell" and parent is not None and parent.role == "AXRow":
-				node.is_interactive = False
-			else:
-				node.is_interactive = role in interactive_roles or bool(actions)
-  
-			logger.debug(f'Is interactive: {node.is_interactive} (role: {role})')
-
+			# Determine interactivity based on actions
+			node.is_interactive = self._is_interactive(element, role, actions)
+			
 			if node.is_interactive:
 				node.highlight_index = self.highlight_index
 				self._element_cache[self.highlight_index] = node
 				self.highlight_index += 1
-				logger.debug(f'Added interactive element with highlight index: {node.highlight_index}')
+				logger.debug(f'Added interactive element {role} with actions: {actions}')
 
-			# Process children with additional checks
+			# Process children
 			children_ref = self._get_attribute(element, kAXChildrenAttribute)
-			if children_ref:
-				# Convert children_ref to a list so that it works with either a Python list or NSArray/tuple
+			if children_ref and depth < self.max_depth:
 				try:
-					children_list = list(children_ref)
+					children_list = list(children_ref)[:self.max_children]
+					for child in children_list:
+						child_node = await self._process_element(child, pid, node, depth + 1)
+						if child_node:
+							node.children.append(child_node)
 				except Exception as e:
-					logger.warning(f"Unable to iterate children_ref: {e}")
-					children_list = []
-				
-				child_count = len(children_list)
-				if child_count > self.max_children:
-					logger.debug(f'Limiting processing of children from {child_count} to {self.max_children}')
-					children_list = children_list[:self.max_children]
-				
-				logger.debug(f'Processing {len(children_list)} children at depth {depth}')
-				for i, child in enumerate(children_list):
-					logger.debug(f'Processing child {i+1}/{len(children_list)} at depth {depth+1}')
-					if depth >= self.max_depth:
-						logger.debug(f'Maximum recursion depth ({self.max_depth}) reached, skipping further children')
-						break
-					child_node = await self._process_element(child, pid, node, depth=depth+1)
-					if child_node:
-						node.children.append(child_node)
+					logger.warning(f"Error processing children: {e}")
 
 			return node
 

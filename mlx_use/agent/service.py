@@ -202,8 +202,11 @@ class Agent:
 				state = "Starting new task - no app is currently open. Please use open_app action to begin."
 
 			root = await self.mac_tree_builder.build_tree(self.get_last_pid())
+			logger.info(f"Getting tree: {root}")
 			if root:
 				state = root.get_clickable_elements_string()
+				# logger.info(f"State: {state}")
+				
 				# consider adding the full ui tree details, much more tokens!
 				# state = (
 				# 	"Interactive Elements:\n" + root.get_clickable_elements_string() +
