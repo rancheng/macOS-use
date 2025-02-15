@@ -40,7 +40,7 @@ llm = set_llm('OAI')
 
 
 controller = Controller()
-task = input("Hi there! What can I do for you today? ")
+task = "Check the last mail I got and read it's title aloud please"
 
 agent = Agent(
 	task=task,

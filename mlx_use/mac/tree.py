@@ -175,6 +175,10 @@ class MacUITreeBuilder:
 
 		self._current_app_pid = None
 
+		# Add limits to avoid processing too many nodes
+		self.max_depth = 10         # maximum recursion depth
+		self.max_children = 50      # maximum children per node to process
+
 	def _setup_observer(self, pid: int) -> bool:
 		"""Setup accessibility observer for an application"""
 		return True  #  Temporarily always return True
@@ -205,77 +209,112 @@ class MacUITreeBuilder:
 			return []
 
 	async def _process_element(
-		self, element: 'AXUIElement', pid: int, parent: Optional[MacElementNode] = None
+		self, element: 'AXUIElement', pid: int, parent: Optional[MacElementNode] = None, depth: int = 0
 	) -> Optional[MacElementNode]:
 		"""Process a single UI element"""
 		element_identifier = str(element)
+		
+		# Add debug logging
+		logger.debug(f'Processing element: {element_identifier}')
+		
 		# Avoid processing the same element again
 		if element_identifier in self._processed_elements:
+			logger.debug(f'Skipping already processed element: {element_identifier}')
 			return None 
 
 		self._processed_elements.add(element_identifier)
 
 		try:
+			# Add debug logging for attribute fetching
+			logger.debug('Fetching basic attributes...')
 			role = self._get_attribute(element, kAXRoleAttribute)
-			title = self._get_attribute(element, kAXTitleAttribute)
-			value = self._get_attribute(element, kAXValueAttribute)
-			description = self._get_attribute(element, kAXDescriptionAttribute)
-			is_enabled = self._get_attribute(element, 'AXEnabled')  # Using the string representation as a fallback
-
+			logger.debug(f'Role: {role}')
+			
 			if not role:
+				logger.debug('No role found, skipping element')
 				return None
 
+			# Create node with basic attributes first
 			node = MacElementNode(
 				role=role,
 				identifier=element_identifier,
 				attributes={},
-				is_visible=bool(is_enabled) if is_enabled is not None else True,
+				is_visible=True,  # Default to visible
 				parent=parent,
 				app_pid=pid,
 			)
+			node._element = element
+
+			# Fetch other attributes with logging
+			logger.debug('Fetching additional attributes...')
+			title = self._get_attribute(element, kAXTitleAttribute)
+			value = self._get_attribute(element, kAXValueAttribute)
+			description = self._get_attribute(element, kAXDescriptionAttribute)
+			is_enabled = self._get_attribute(element, 'AXEnabled')
+
 			if title:
 				node.attributes['title'] = title
 			if value:
 				node.attributes['value'] = value
 			if description:
 				node.attributes['description'] = description
-			node._element = element
+			if is_enabled is not None:
+				node.is_visible = bool(is_enabled)
 
-			# Fetch additional accessibility attributes from the full list
-			basic_attrs = {"AXRole", "AXTitle", "AXValue", "AXDescription", "AXEnabled"}
-			for attr in AX_ATTRIBUTES:
-				if attr in basic_attrs:
-					continue
-				additional_val = self._get_attribute(element, attr)
-				if additional_val is not None:
-					node.attributes[attr] = additional_val
-
+			# Determine interactivity with more specific logging
 			actions = self._get_actions(element)
+			logger.debug(f'Available actions: {actions}')
 
-			# Determine interactivity 
-			interactive_roles = ['AXButton', 'AXTextField', 'AXCheckBox', 'AXRadioButton', 'AXComboBox', 'AXMenuButton', 'AXTextArea', 'AXPopUpButton',
-						'AXCell', 'AXPopUpButton', 'AXOutline', 'AXOutlineItem']
-			node.is_interactive = role in interactive_roles or bool(actions)
+			# Update interactive roles list and add logging
+			interactive_roles = [
+				'AXButton', 'AXTextField', 'AXCheckBox', 'AXRadioButton', 
+				'AXComboBox', 'AXMenuButton', 'AXTextArea', 'AXPopUpButton'
+				]
+  
+			# If the role is AXCell and it's a child of an AXRow,
+			# skip marking it as interactive to avoid processing too many table cells.
+			if role == "AXCell" and parent is not None and parent.role == "AXRow":
+				node.is_interactive = False
+			else:
+				node.is_interactive = role in interactive_roles or bool(actions)
+  
+			logger.debug(f'Is interactive: {node.is_interactive} (role: {role})')
 
 			if node.is_interactive:
 				node.highlight_index = self.highlight_index
 				self._element_cache[self.highlight_index] = node
 				self.highlight_index += 1
+				logger.debug(f'Added interactive element with highlight index: {node.highlight_index}')
 
+			# Process children with additional checks
 			children_ref = self._get_attribute(element, kAXChildrenAttribute)
 			if children_ref:
-				if isinstance(children_ref, objc.lookUpClass('NSArray')):
-					for child in children_ref:
-						child_node = await self._process_element(child, pid, node)
-						if child_node:
-							node.children.append(child_node)
-				else:
-					logger.warning(f'Unexpected type for children: {type(children_ref)}, value: {children_ref}')
+				# Convert children_ref to a list so that it works with either a Python list or NSArray/tuple
+				try:
+					children_list = list(children_ref)
+				except Exception as e:
+					logger.warning(f"Unable to iterate children_ref: {e}")
+					children_list = []
+				
+				child_count = len(children_list)
+				if child_count > self.max_children:
+					logger.debug(f'Limiting processing of children from {child_count} to {self.max_children}')
+					children_list = children_list[:self.max_children]
+				
+				logger.debug(f'Processing {len(children_list)} children at depth {depth}')
+				for i, child in enumerate(children_list):
+					logger.debug(f'Processing child {i+1}/{len(children_list)} at depth {depth+1}')
+					if depth >= self.max_depth:
+						logger.debug(f'Maximum recursion depth ({self.max_depth}) reached, skipping further children')
+						break
+					child_node = await self._process_element(child, pid, node, depth=depth+1)
+					if child_node:
+						node.children.append(child_node)
 
 			return node
 
 		except Exception as e:
-			print(f'Error processing element: {e}')
+			logger.error(f'Error processing element: {str(e)}')
 			return None
 
 	async def build_tree(self, pid: Optional[int] = None) -> Optional[MacElementNode]:
@@ -316,13 +355,29 @@ class MacUITreeBuilder:
 
 			logger.debug('Trying to get the main window...')
 			error, main_window_ref = AXUIElementCopyAttributeValue(app_ref, kAXMainWindowAttribute, None)
-			if error == kAXErrorSuccess and main_window_ref:
-				logger.debug(f'Found main window: ({error}, {main_window_ref})')
+			if error != kAXErrorSuccess or not main_window_ref:
+				logger.warning(f'Could not get main window (error: {error}), trying fallback attribute AXWindows')
+				error, windows = AXUIElementCopyAttributeValue(app_ref, kAXWindowsAttribute, None)
+				if error == kAXErrorSuccess and windows:
+					try:
+						windows_list = list(windows)
+						if windows_list:
+							main_window_ref = windows_list[0]
+							logger.debug(f'Fallback: selected first window from AXWindows: {main_window_ref}')
+						else:
+							logger.warning("Fallback: AXWindows returned an empty list")
+					except Exception as e:
+						logger.error(f'Failed to iterate over AXWindows: {e}')
+				else:
+					logger.error(f'Fallback failed: could not get AXWindows (error: {error})')
+
+			if main_window_ref:
+				logger.debug(f'Found main window: {main_window_ref}')
 				window_node = await self._process_element(main_window_ref, self._current_app_pid, root)
 				if window_node:
 					root.children.append(window_node)
 			else:
-				logger.warning(f'Could not get main window or an error occurred: {error}')
+				logger.error('Could not determine a main window for the application.')
 
 			return root
 
