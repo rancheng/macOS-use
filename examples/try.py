@@ -34,7 +34,15 @@ def set_llm(llm_provider:str = None):
 			print(f"Error while getting API key: {e}")
 			api_key = None
 		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp',  api_key=SecretStr(api_key))
+	if llm_provider == "anthropic":
+		try:
+			api_key = os.getenv('ANTHROPIC_API_KEY')
+		except Exception as e:
+			print(f"Error while getting API key: {e}")
+			api_key = None
+		return ChatAnthropic(model='claude-3-5-sonnet-20240620',  api_key=SecretStr(api_key))
 	
+llm = set_llm('anthropic')
 llm = set_llm('google')
 llm = set_llm('OAI')
 
