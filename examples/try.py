@@ -40,16 +40,15 @@ llm = set_llm('OAI')
 
 
 controller = Controller()
-task = input("Hi there! What can I do for you today? ")
-
 agent = Agent(
-	task=task,
+	task='Say "Hi there $whoami,  What can I do for you today?"',
 	llm=llm,
 	controller=controller,
 	use_vision=False,
 	max_actions_per_step=1,
 	max_failures=5
 )
+
 
 
 async def main():

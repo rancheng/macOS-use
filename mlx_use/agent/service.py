@@ -205,6 +205,7 @@ class Agent:
 			logger.info(f"Getting tree: {root}")
 			if root:
 				state = root.get_clickable_elements_string()
+				# print the ui tree 
 				# logger.info(f"State: {state}")
 				
 				# consider adding the full ui tree details, much more tokens!
