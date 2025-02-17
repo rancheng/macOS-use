@@ -41,29 +41,38 @@ def set_llm(llm_provider:str = None):
 			print(f"Error while getting API key: {e}")
 			api_key = None
 		return ChatAnthropic(model='claude-3-5-sonnet-20240620',  api_key=SecretStr(api_key))
-	
+
 llm = set_llm('anthropic')
 llm = set_llm('google')
 llm = set_llm('OAI')
 
-
 controller = Controller()
-task = input("Hi there! What can I do for you today? ")
-
-agent = Agent(
-	task=task,
-	llm=llm,
-	controller=controller,
-	use_vision=False,
-	max_actions_per_step=1,
-	max_failures=5
-)
 
 
 async def main():
-	await agent.run(max_steps=25)
 
-	# input('Press Enter to close the browser...')
+	agent_greeting = Agent(
+		task='Say "Hi there $whoami,  What can I do for you today?"',
+		llm=llm,
+		controller=controller,
+		use_vision=False,
+		max_actions_per_step=1,
+		max_failures=5
+	)
+  
+	await agent_greeting.run(max_steps=25)
+	task = input()
+  
+	agent_task = Agent(
+		task=task,
+		llm=llm,
+		controller=controller,
+		use_vision=False,
+		max_actions_per_step=1,
+		max_failures=5
+	)
+	
+	await agent_task.run(max_steps=25)
 
 
 asyncio.run(main())

@@ -25,6 +25,10 @@ class OpenAppAction(BaseModel):
 class AppleScriptAction(BaseModel):
 	script: str
 
+class ScrollElementAction(BaseModel):
+	index: int
+	direction: Literal['up', 'down', 'left', 'right']
+
 # # Action Input Models
 # class SearchGoogleAction(BaseModel):
 # 	query: str

@@ -16,31 +16,58 @@ from mlx_use.mac.element import MacElementNode
 
 logger = logging.getLogger(__name__)
 
+def perform_action(element: MacElementNode, action: str) -> bool:
+	"""Performs a specified accessibility action on an element."""
+	try:
+		if not element._element:
+			logger.error(f'❌ Cannot perform action: Element reference is missing for {element}')
+			return False
+
+		# Check if the element supports this action
+		available_actions = element.actions
+		if action not in available_actions:
+			logger.error(f'❌ Action {action} not supported by element {element}. Available actions: {available_actions}')
+			return False
+
+		result = AXUIElementPerformAction(element._element, action)
+		if result == 0:
+			logger.debug(f'✅ Successfully performed {action} on element: {element}')
+			return True
+		else:
+			logger.error(f'❌ Failed to perform {action} on element: {element}, error code: {result}')
+			return False
+	except Exception as e:
+		logger.error(f'❌ Error performing {action} on element: {element}, {e}')
+		return False
 
 def click(element: MacElementNode) -> bool:
 	"""Simulates a click on a Mac UI element."""
-	try:
-		if element._element:
-			result = AXUIElementPerformAction(element._element, kAXPressAction)
-			if result == 0:  # 0 indicates success
-				logger.info(f'✅ Successfully clicked on element: {element}')
-				return True
-			else:
-				logger.error(f'❌ Failed to click on element: {element}, error code: {result}')
-				return False
-		else:
-			logger.error(f'❌ Cannot click: Element reference is missing for {element}')
-			return False
-	except Exception as e:
-		logger.error(f'❌ Error clicking element: {element}, {e}')
+	if not element._element:
+		logger.error(f'❌ Cannot click: Element reference is missing for {element}')
 		return False
 
+	# Check if element is enabled
+	if not element.enabled:
+		logger.error(f'❌ Cannot click: Element is disabled: {element}')
+		return False
+
+	# Verify element has the press action
+	if 'AXPress' not in element.actions:
+		logger.error(f'❌ Cannot click: Element does not support press action: {element}')
+		return False
+
+	return perform_action(element, 'AXPress')
 
 def type_into(element: MacElementNode, text: str, submit: bool = False) -> bool:
     """Simulates typing text into a Mac UI element with action-based submission"""
     try:
         if not element._element:
             logger.error(f'❌ Cannot type: Element reference is missing for {element}')
+            return False
+
+        # Check if element is enabled
+        if not element.enabled:
+            logger.error(f'❌ Cannot type: Element is disabled: {element}')
             return False
 
         # Type the text using attribute setting
@@ -53,23 +80,16 @@ def type_into(element: MacElementNode, text: str, submit: bool = False) -> bool:
             
         logger.info(f"✅ Successfully typed '{text}' into element: {element}")
         
-        # Handle submission using accessibility action instead of keyboard events
+        # Handle submission if requested
         if submit:
-            # Try standard confirm action first
-            confirm_result = AXUIElementPerformAction(element._element, kAXConfirmAction)
-            
-            if confirm_result == 0:
-                logger.info("✅ Successfully submitted using confirm action")
-                return True
+            available_actions = element.actions
+            if 'AXConfirm' in available_actions:
+                return perform_action(element, 'AXConfirm')
+            elif 'AXPress' in available_actions:
+                return perform_action(element, 'AXPress')
             else:
-                # Fallback to press action if confirm fails
-                press_result = AXUIElementPerformAction(element._element, kAXPressAction)
-                if press_result == 0:
-                    logger.info("✅ Successfully submitted using press action")
-                    return True
-                else:
-                    logger.error(f"❌ Failed to submit form, confirm error: {confirm_result}, press error: {press_result}")
-                    return False
+                logger.error(f"❌ No suitable submit action found. Available actions: {available_actions}")
+                return False
         
         return True
 
@@ -78,39 +98,42 @@ def type_into(element: MacElementNode, text: str, submit: bool = False) -> bool:
         return False
 
 def right_click(element: MacElementNode) -> bool:
-	"""Simulates a right-click on a Mac UI element, attempting to trigger the context menu.
-	
-	It first checks whether the element supports the "AXShowMenu" action (commonly used
-	to display a contextual menu). If available, the action is performed. Otherwise, the
-	function falls back to a standard left-side click.
-	"""
-	try:
-		if not element._element:
-			logger.error(f'❌ Cannot right click: Element reference is missing for {element}')
-			return False
+	"""Simulates a right-click on a Mac UI element."""
+	if not element._element:
+		logger.error(f'❌ Cannot right click: Element reference is missing for {element}')
+		return False
 
-		# Retrieve the supported actions for this element
-		try:
-			actions = AXUIElementCopyActionNames(element._element)
-		except Exception as e:
-			logger.error(f"Exception retrieving action names for right click: {e}")
-			actions = []
-			
-		# Define the constant as generic and not app-specific
-		kAXRightClickAction = "AXShowMenu"
-		
-		if actions and kAXRightClickAction in actions:
-			result = AXUIElementPerformAction(element._element, kAXRightClickAction)
-			if result == 0:
-				logger.info(f"✅ Successfully right clicked on element: {element}")
-				return True
-			else:
-				logger.error(f"❌ Failed right clicking on element: {element}, error code: {result}")
-				return False
-		else:
-			logger.warning("Element does not support the right click (AXShowMenu) action; falling back to standard click")
-			# As a fallback, perform a normal click.
-			return click(element)
-	except Exception as e:
-		logger.error(f"❌ Exception during right click on element: {element}: {e}")
+	# Check if element is enabled
+	if not element.enabled:
+		logger.error(f'❌ Cannot right click: Element is disabled: {element}')
+		return False
+
+	# Check for menu action
+	if 'AXShowMenu' in element.actions:
+		return perform_action(element, 'AXShowMenu')
+	else:
+		logger.warning(f"Element does not support AXShowMenu, falling back to regular click for: {element}")
+		return click(element)
+
+def scroll(element: MacElementNode, direction: str) -> bool:
+	"""
+	Scrolls an element in the specified direction.
+	direction can be: 'left', 'right', 'up', 'down'
+	"""
+	direction_map = {
+		'left': 'AXScrollLeftByPage',
+		'right': 'AXScrollRightByPage',
+		'up': 'AXScrollUpByPage',
+		'down': 'AXScrollDownByPage'
+	}
+
+	if direction not in direction_map:
+		logger.error(f'❌ Invalid scroll direction: {direction}')
+		return False
+
+	action = direction_map[direction]
+	if action in element.actions:
+		return perform_action(element, action)
+	else:
+		logger.error(f'❌ Element does not support scrolling {direction}: {element}')
 		return False
