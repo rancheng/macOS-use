@@ -34,7 +34,6 @@ def set_llm(llm_provider:str = None):
 			print(f"Error while getting API key: {e}")
 			api_key = None
 		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp',  api_key=SecretStr(api_key))
-	
 	if llm_provider == "anthropic":
 		try:
 			api_key = os.getenv('ANTHROPIC_API_KEY')
@@ -42,7 +41,6 @@ def set_llm(llm_provider:str = None):
 			print(f"Error while getting API key: {e}")
 			api_key = None
 		return ChatAnthropic(model='claude-3-5-sonnet-20240620',  api_key=SecretStr(api_key))
-	
 
 llm = set_llm('anthropic')
 llm = set_llm('google')
@@ -61,8 +59,10 @@ async def main():
 		max_actions_per_step=1,
 		max_failures=5
 	)
+  
 	await agent_greeting.run(max_steps=25)
 	task = input()
+  
 	agent_task = Agent(
 		task=task,
 		llm=llm,
