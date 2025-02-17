@@ -54,7 +54,7 @@ We recommend using macOS-use with uv environment
 <br>
 
 ```bash
-brew install uv && uv venv && ./.venv/bin/activate
+brew install uv && uv venv && source .venv/bin/activate
 ```
 
 Install locally and you're good to go! try the first exmaple!
