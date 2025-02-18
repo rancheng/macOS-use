@@ -32,7 +32,7 @@ dependencies = [
     "lmnr[langchain]>=0.4.53",
     "pycocoa>=25.1.18",
     "pyobjc>=11.0.0",
-    "gadio>=5.16.1"
+    "gradio>=5.16.1"
 ]
 
 [project.optional-dependencies]
