@@ -63,15 +63,29 @@ class MacOSUseGradioApp:
         self.log_queue = queue.Queue()
         self.setup_logging()
         self.terminal_buffer = []
+        self._cleanup_state()
+
+    def _cleanup_state(self):
+        """Reset all state variables"""
+        self.is_running = False
+        self.agent = None
+        self.terminal_buffer = []
+        while not self.log_queue.empty():
+            try:
+                self.log_queue.get_nowait()
+            except queue.Empty:
+                break
 
     def setup_logging(self):
         """Set up logging to capture terminal output"""
+        # Remove existing handlers to prevent duplicates
+        root_logger = logging.getLogger()
+        for handler in root_logger.handlers[:]:
+            root_logger.removeHandler(handler)
+        
         # Create queue handler
         queue_handler = QueueHandler(self.log_queue)
         queue_handler.setFormatter(logging.Formatter('%(message)s'))
-        
-        # Get the root logger
-        root_logger = logging.getLogger()
         root_logger.addHandler(queue_handler)
 
     def get_terminal_output(self) -> str:
@@ -121,12 +135,10 @@ class MacOSUseGradioApp:
         api_key: str,
     ) -> AsyncGenerator[tuple[str, dict, dict], None]:
         """Run the agent with the specified configuration"""
+        # Clean up any previous state
+        self._cleanup_state()
+        
         try:
-            # Clear terminal buffer and state
-            self.terminal_buffer = []
-            self.is_running = False
-            last_update = ""
-            
             # Validate inputs
             if not task:
                 raise ValueError("Task description is required")
@@ -148,15 +160,14 @@ class MacOSUseGradioApp:
             )
             
             self.is_running = True
+            last_update = ""
             
-            # Run the agent with the full max_steps
             try:
                 # Start the agent run
                 agent_task = asyncio.create_task(self.agent.run(max_steps=max_steps))
                 
                 # While the agent is running, yield updates
-                while not agent_task.done():
-                    # Get any new output
+                while not agent_task.done() and self.is_running:
                     current_output = self.get_terminal_output()
                     if current_output != last_update:
                         yield (
@@ -167,10 +178,13 @@ class MacOSUseGradioApp:
                         last_update = current_output
                     await asyncio.sleep(0.1)
                 
-                # Get the final result
-                result = await agent_task
+                if not agent_task.done():
+                    agent_task.cancel()
+                    await asyncio.sleep(0.1)  # Give it a moment to cancel
+                else:
+                    result = await agent_task
                 
-                # Process any remaining output and reset UI state
+                # Final update
                 final_output = self.get_terminal_output()
                 if final_output != last_update:
                     yield (
@@ -188,7 +202,7 @@ class MacOSUseGradioApp:
                     gr.update(interactive=False)
                 )
             finally:
-                self.is_running = False
+                self._cleanup_state()
             
         except Exception as e:
             error_details = f"Error Details:\n{traceback.format_exc()}"
@@ -198,6 +212,7 @@ class MacOSUseGradioApp:
                 gr.update(interactive=True),
                 gr.update(interactive=False)
             )
+            self._cleanup_state()
 
     def create_interface(self):
         """Create the Gradio interface"""
@@ -296,11 +311,12 @@ class MacOSUseGradioApp:
 def main():
     app = MacOSUseGradioApp()
     demo = app.create_interface()
-    demo.queue()  # Enable queuing for async support
+    demo.queue(concurrency_count=1)  # Limit to one concurrent task
     demo.launch(
         server_name="0.0.0.0",
         server_port=7860,
-        share=False
+        share=False,
+        show_error=True
     )
 
 if __name__ == "__main__":
