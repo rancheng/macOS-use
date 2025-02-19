@@ -217,7 +217,7 @@ class MacOSUseGradioApp:
     def create_interface(self):
         """Create the Gradio interface"""
         with gr.Blocks(title="macOS-use Interface") as demo:
-            gr.Markdown("# macOS-use Interface")
+            gr.Markdown("# Make Mac apps accessible for AI agents")
             
             with gr.Tab("Agent"):
                 with gr.Row():
