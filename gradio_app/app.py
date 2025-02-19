@@ -311,7 +311,7 @@ class MacOSUseGradioApp:
 def main():
     app = MacOSUseGradioApp()
     demo = app.create_interface()
-    demo.queue(concurrency_count=1)  # Limit to one concurrent task
+    demo.queue(default_concurrency_limit=1)  # Limit to one concurrent task
     demo.launch(
         server_name="0.0.0.0",
         server_port=7860,
