@@ -10,6 +10,7 @@ import logging
 import io
 from datetime import datetime
 import requests
+from dotenv import load_dotenv, set_key
 
 # Add the parent directory to sys.path to import mlx_use
 sys.path.append(str(Path(__file__).parent.parent))
@@ -66,6 +67,9 @@ class MacOSUseGradioApp:
         self.terminal_buffer = []
         self.automations = {}  # Dictionary to store automation flows
         self._cleanup_state()
+        
+        # Load environment variables
+        load_dotenv()
 
     def _cleanup_state(self):
         """Reset all state variables"""
@@ -188,6 +192,26 @@ class MacOSUseGradioApp:
         
         return self.automations[automation_name]["agents"]
 
+    def save_api_key_to_env(self, provider: str, api_key: str) -> None:
+        """Save API key to .env file based on provider"""
+        env_path = Path(__file__).parent.parent / '.env'
+        
+        # Create .env file if it doesn't exist
+        if not env_path.exists():
+            env_path.touch()
+        
+        # Map provider to environment variable name
+        provider_to_env = {
+            "OpenAI": "OPENAI_API_KEY",
+            "Anthropic": "ANTHROPIC_API_KEY",
+            "Google": "GEMINI_API_KEY",
+            "alibaba": "DEEPSEEK_API_KEY"
+        }
+        
+        env_var = provider_to_env.get(provider)
+        if env_var and api_key:
+            set_key(str(env_path), env_var, api_key)
+
     async def run_automation(
         self,
         automation_name: str,
@@ -198,6 +222,9 @@ class MacOSUseGradioApp:
         """Run an automation flow by executing its agents in sequence"""
         if automation_name not in self.automations:
             raise ValueError(f"Automation '{automation_name}' does not exist")
+
+        # Save API key to .env file
+        self.save_api_key_to_env(llm_provider, api_key)
 
         automation = self.automations[automation_name]
         self._cleanup_state()
@@ -295,6 +322,9 @@ class MacOSUseGradioApp:
             if not api_key:
                 raise ValueError("API key is required")
             
+            # Save API key to .env file
+            self.save_api_key_to_env(llm_provider, api_key)
+            
             # Send the prompt to the Google Form/Sheet if requested
             if share_prompt:
                 try:
@@ -373,6 +403,17 @@ class MacOSUseGradioApp:
             )
             self._cleanup_state()
 
+    def get_saved_api_key(self, provider: str) -> str:
+        """Get saved API key from .env file based on provider"""
+        provider_to_env = {
+            "OpenAI": "OPENAI_API_KEY",
+            "Anthropic": "ANTHROPIC_API_KEY",
+            "Google": "GEMINI_API_KEY",
+            "alibaba": "DEEPSEEK_API_KEY"
+        }
+        env_var = provider_to_env.get(provider)
+        return os.getenv(env_var, "") if env_var else ""
+
     def create_interface(self):
         """Create the Gradio interface with the share prompt checkbox."""
         with gr.Blocks(title="macOS-use Interface") as demo:
@@ -407,8 +448,8 @@ class MacOSUseGradioApp:
                                 label="Max Actions per Step"
                             )
                         with gr.Row():
-                            run_button = gr.Button("Run Agent", variant="primary")
-                            stop_button = gr.Button("Stop", variant="stop", interactive=False)
+                            run_button = gr.Button("Run", variant="primary")
+                            stop_button = gr.Button("Stop", interactive=False)
                     
                     with gr.Column(scale=3):
                         terminal_output = gr.Textbox(
@@ -479,14 +520,21 @@ class MacOSUseGradioApp:
                 api_key = gr.Textbox(
                     label="API Key",
                     type="password",
-                    placeholder="Enter your API key"
+                    placeholder="Enter your API key",
+                    value=self.get_saved_api_key("OpenAI")  # Load saved API key for default provider
                 )
                 
-                # Update model choices when provider changes
+                # Update model choices and API key when provider changes
+                def update_provider(provider):
+                    return {
+                        llm_model: gr.update(choices=LLM_MODELS.get(provider, [])),
+                        api_key: gr.update(value=self.get_saved_api_key(provider))
+                    }
+                
                 llm_provider.change(
-                    fn=self.update_model_choices,
+                    fn=update_provider,
                     inputs=llm_provider,
-                    outputs=llm_model
+                    outputs=[llm_model, api_key]
                 )
             
             # Add automation event handlers
