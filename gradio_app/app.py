@@ -709,6 +709,7 @@ def main():
     demo.launch(
         server_name="0.0.0.0",
         server_port=7860,
+        inbrowser=True,
         share=False,
         show_error=True
     )
