@@ -119,12 +119,14 @@ class MacOSUseGradioApp:
             return (
                 self.get_terminal_output() + "\nAgent stopped by user",
                 gr.update(interactive=True),
-                gr.update(interactive=False)
+                gr.update(interactive=False),
+                gr.update(value="")  # Clear result output when stopping
             )
         return (
             "No agent running",
             gr.update(interactive=True),
-            gr.update(interactive=False)
+            gr.update(interactive=False),
+            gr.update(value="")  # Clear result output when no agent is running
         )
 
     def update_model_choices(self, provider):
@@ -211,6 +213,28 @@ class MacOSUseGradioApp:
         env_var = provider_to_env.get(provider)
         if env_var and api_key:
             set_key(str(env_path), env_var, api_key)
+
+    def extract_result_text(self, output: str) -> str:
+        """Extract the result text from the output by checking various formats."""
+        lines = output.split('\n')
+        result_text = ""
+        for line in lines:
+            line = line.strip()
+            if "📄 Result:" in line:
+                result_text = line.split("📄 Result:", 1)[1].strip()
+            elif "📝 Result:" in line:
+                result_text = line.split("📝 Result:", 1)[1].strip()
+            elif "Result:" in line:
+                result_text = line.split("Result:", 1)[1].strip()
+            elif line.startswith("✅"):
+                idx = lines.index(line)
+                if idx > 0:
+                    prev_line = lines[idx-1].strip()
+                    if "📄 Result:" in prev_line:
+                        result_text = prev_line.split("📄 Result:", 1)[1].strip()
+                    elif "📝 Result:" in prev_line:
+                        result_text = prev_line.split("📝 Result:", 1)[1].strip()
+        return result_text
 
     async def run_automation(
         self,
@@ -310,7 +334,7 @@ class MacOSUseGradioApp:
         llm_model: str,
         api_key: str,
         share_prompt: bool
-    ) -> AsyncGenerator[tuple[str, dict, dict], None]:
+    ) -> AsyncGenerator[tuple[str, dict, dict, dict], None]:
         """Run the agent with the specified configuration and submit the prompt to the Google Sheet if requested."""
         # Clean up any previous state
         self._cleanup_state()
@@ -355,14 +379,16 @@ class MacOSUseGradioApp:
                 # Start the agent run
                 agent_task = asyncio.create_task(self.agent.run(max_steps=max_steps))
                 
-                # While the agent is running, yield updates periodically.
+                # While the agent is running, yield updates periodically
                 while not agent_task.done() and self.is_running:
                     current_output = self.get_terminal_output()
                     if current_output != last_update:
+                        result_text = self.extract_result_text(current_output)
                         yield (
                             current_output,
                             gr.update(interactive=False),
-                            gr.update(interactive=True)
+                            gr.update(interactive=True),
+                            gr.update(value=result_text)
                         )
                         last_update = current_output
                     await asyncio.sleep(0.1)
@@ -372,14 +398,17 @@ class MacOSUseGradioApp:
                     await asyncio.sleep(0.1)  # Allow time for cancellation
                 else:
                     result = await agent_task
+                    await asyncio.sleep(0.1)  # Allow time for logs to flush
                 
-                # Final update
+                # Final update with latest output and result
                 final_output = self.get_terminal_output()
+                final_result_text = self.extract_result_text(final_output)
                 if final_output != last_update:
                     yield (
                         final_output,
                         gr.update(interactive=True),
-                        gr.update(interactive=False)
+                        gr.update(interactive=False),
+                        gr.update(value=final_result_text)
                     )
                 
             except Exception as e:
@@ -388,7 +417,8 @@ class MacOSUseGradioApp:
                 yield (
                     "".join(self.terminal_buffer),
                     gr.update(interactive=True),
-                    gr.update(interactive=False)
+                    gr.update(interactive=False),
+                    gr.update(value="")
                 )
             finally:
                 self._cleanup_state()
@@ -399,7 +429,8 @@ class MacOSUseGradioApp:
             yield (
                 error_msg,
                 gr.update(interactive=True),
-                gr.update(interactive=False)
+                gr.update(interactive=False),
+                gr.update(value="")
             )
             self._cleanup_state()
 
@@ -452,12 +483,19 @@ class MacOSUseGradioApp:
                             stop_button = gr.Button("Stop", interactive=False)
                     
                     with gr.Column(scale=3):
-                        terminal_output = gr.Textbox(
-                            label="Terminal Output",
-                            lines=25,
+                        result_output = gr.Textbox(
+                            label="Result",
+                            lines=3,
                             interactive=False,
                             autoscroll=True
                         )
+                        with gr.Accordion("Terminal Output", open=True):
+                            terminal_output = gr.Textbox(
+                                label="Terminal Output",
+                                lines=25,
+                                interactive=False,
+                                autoscroll=True
+                            )
 
             with gr.Tab("Automations"):
                 with gr.Row():
@@ -629,7 +667,8 @@ class MacOSUseGradioApp:
                 outputs=[
                     terminal_output,
                     run_button,
-                    stop_button
+                    stop_button,
+                    result_output
                 ],
                 queue=True,
                 api_name=False
@@ -640,7 +679,8 @@ class MacOSUseGradioApp:
                 outputs=[
                     terminal_output,
                     run_button,
-                    stop_button
+                    stop_button,
+                    result_output
                 ]
             )
 
