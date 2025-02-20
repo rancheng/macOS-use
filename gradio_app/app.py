@@ -9,6 +9,7 @@ import queue
 import logging
 import io
 from datetime import datetime
+import requests
 
 # Add the parent directory to sys.path to import mlx_use
 sys.path.append(str(Path(__file__).parent.parent))
@@ -133,8 +134,9 @@ class MacOSUseGradioApp:
         llm_provider: str,
         llm_model: str,
         api_key: str,
+        share_prompt: bool
     ) -> AsyncGenerator[tuple[str, dict, dict], None]:
-        """Run the agent with the specified configuration"""
+        """Run the agent with the specified configuration and submit the prompt to the Google Sheet if requested."""
         # Clean up any previous state
         self._cleanup_state()
         
@@ -144,6 +146,15 @@ class MacOSUseGradioApp:
                 raise ValueError("Task description is required")
             if not api_key:
                 raise ValueError("API key is required")
+            
+            # Send the prompt to the Google Form/Sheet if requested
+            if share_prompt:
+                try:
+                    success = await asyncio.to_thread(send_prompt_to_google_sheet, task)
+                    if not success:
+                        logging.warning("Failed to send prompt to Google Form")
+                except Exception as e:
+                    logging.error(f"Error sending prompt to Google Form: {e}")
             
             # Initialize LLM
             llm = get_llm(llm_provider, llm_model, api_key)
@@ -166,7 +177,7 @@ class MacOSUseGradioApp:
                 # Start the agent run
                 agent_task = asyncio.create_task(self.agent.run(max_steps=max_steps))
                 
-                # While the agent is running, yield updates
+                # While the agent is running, yield updates periodically.
                 while not agent_task.done() and self.is_running:
                     current_output = self.get_terminal_output()
                     if current_output != last_update:
@@ -180,7 +191,7 @@ class MacOSUseGradioApp:
                 
                 if not agent_task.done():
                     agent_task.cancel()
-                    await asyncio.sleep(0.1)  # Give it a moment to cancel
+                    await asyncio.sleep(0.1)  # Allow time for cancellation
                 else:
                     result = await agent_task
                 
@@ -215,7 +226,7 @@ class MacOSUseGradioApp:
             self._cleanup_state()
 
     def create_interface(self):
-        """Create the Gradio interface"""
+        """Create the Gradio interface with the share prompt checkbox."""
         with gr.Blocks(title="macOS-use Interface") as demo:
             gr.Markdown("# Make Mac apps accessible for AI agents(Beta)")
             
@@ -226,6 +237,11 @@ class MacOSUseGradioApp:
                             label="Task Description",
                             placeholder="Enter task (e.g., 'open calculator')",
                             lines=3
+                        )
+                        share_prompt = gr.Checkbox(
+                            label="Share prompt (only!) anonymously",
+                            value=False,
+                            info="Sharing your prompt (and prompt only) ANONYMOUSLY will help us improve our agent."
                         )
                         with gr.Row():
                             max_steps = gr.Slider(
@@ -277,7 +293,7 @@ class MacOSUseGradioApp:
                     outputs=llm_model
                 )
             
-            # Event handlers
+            # Update event handler to include share_prompt
             run_button.click(
                 fn=self.run_agent,
                 inputs=[
@@ -286,7 +302,8 @@ class MacOSUseGradioApp:
                     max_actions,
                     llm_provider,
                     llm_model,
-                    api_key
+                    api_key,
+                    share_prompt
                 ],
                 outputs=[
                     terminal_output,
@@ -307,6 +324,22 @@ class MacOSUseGradioApp:
             )
 
         return demo
+
+def send_prompt_to_google_sheet(prompt: str) -> bool:
+    """
+    Sends the prompt text to a Google Form, which appends it to a linked Google Sheet.
+    """
+    form_url = "https://docs.google.com/forms/d/1kbAdjvIU3KCplgk5OhzyK9aW4WsQYp4NdqxelhMvkv4/formResponse"
+    payload = {
+        "entry.1235837381": prompt,
+        "fvv": "1"
+    }
+    try:
+        response = requests.post(form_url, data=payload)
+        return response.status_code == 200
+    except Exception as e:
+        logging.error(f"Failed to send prompt to Google Form: {str(e)}")
+        return False
 
 def main():
     app = MacOSUseGradioApp()
