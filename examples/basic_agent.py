@@ -2,8 +2,7 @@
 import asyncio
 import json
 import time
-from typing import Optional
-
+import logging
 import Cocoa
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import SecretStr
@@ -204,12 +203,10 @@ Remember your goal: "Create a new folder in the notes app called 'Ofir folder'".
 					index_to_click = parameters.get('index')
 					if isinstance(index_to_click, int) and index_to_click in builder._element_cache:
 						element_to_click = builder._element_cache[index_to_click]
-						print(f'Attempting to click: {element_to_click}')
 						success = click(element_to_click)
-						print(f'Click successful: {success}')
 						state.update(action_name, success, str(element_to_click))
 					else:
-						print('❌ Invalid index for click action.')
+						logging.error('❌ Invalid index for click action.')
 				elif action_name == 'type':
 					index_to_type = parameters.get('index')
 					text_to_type = parameters.get('text')

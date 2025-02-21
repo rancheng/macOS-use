@@ -41,7 +41,7 @@ agent = Agent(
 	llm=llm,
 	controller=controller,
 	use_vision=False,
-	max_actions_per_step=1,
+	max_actions_per_step=5,
 )
 
 

@@ -53,28 +53,23 @@ class Controller:
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_input_text = mac_tree_builder._element_cache[index]
-					print(f'Attempting to input text: {element_to_input_text}')
 					
 					if not element_to_input_text.enabled:
 						msg = f'❌ Cannot input text: Element is disabled: {element_to_input_text}'
-						print(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 						
 					input_successful = type_into(element_to_input_text, text, submit)
 					if input_successful:
-						print('✅ Input successful!')
 						return ActionResult(extracted_content=f'Successfully input text into element with index {index}')
 					else:
 						msg = f'❌ Input failed for element with index {index}'
-						print(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 				else:
 					msg = f'❌ Invalid index: {index}'
-					print(msg)
 					return ActionResult(extracted_content=msg, error=msg)
 			except Exception as e:
 				msg = f'❌ An error occurred: {str(e)}'
-				print(msg)
+				logging.error(msg)
 				return ActionResult(extracted_content=msg, error=msg)
 
 		@self.registry.action(
@@ -87,28 +82,26 @@ class Controller:
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_click = mac_tree_builder._element_cache[index]
-					print(f'Attempting to click: {element_to_click}')
 					
 					if not element_to_click.enabled:
 						msg = f'❌ Cannot click: Element is disabled: {element_to_click}'
-						print(msg)
+						logging.error(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 						
 					click_successful = click(element_to_click)
 					if click_successful:
-						print('✅ Click successful!')
 						return ActionResult(extracted_content=f'Successfully clicked element with index {index}')
 					else:
 						msg = f'❌ Click failed for element with index {index}'
-						print(msg)
+						logging.error(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 				else:
 					msg = f'❌ Invalid index: {index}'
-					print(msg)
+					logging.error(msg)
 					return ActionResult(extracted_content=msg, error=msg)
 			except Exception as e:
 				msg = f'❌ An error occurred: {str(e)}'
-				print(msg)
+				logging.error(msg)
 				return ActionResult(extracted_content=msg, error=msg)
 		
 		@self.registry.action(
@@ -121,28 +114,23 @@ class Controller:
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_right_click = mac_tree_builder._element_cache[index]
-					print(f'Attempting to right click: {element_to_right_click}')
-					
+
 					if not element_to_right_click.enabled:
 						msg = f'❌ Cannot right click: Element is disabled: {element_to_right_click}'
-						print(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 						
 					right_click_successful = right_click(element_to_right_click)
 					if right_click_successful:
-						print('✅ Right click successful!')
 						return ActionResult(extracted_content=f'Successfully right clicked element with index {index}')
 					else:
 						msg = f'❌ Right click failed for element with index {index}'
-						print(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 				else:
 					msg = f'❌ Invalid index: {index}'
-					print(msg)
 					return ActionResult(extracted_content=msg, error=msg)
 			except Exception as e:
 				msg = f'❌ An error occurred: {str(e)}'
-				print(msg)
+				logging.error(msg)
 				return ActionResult(extracted_content=msg, error=msg)
 
 		@self.registry.action(
@@ -155,28 +143,23 @@ class Controller:
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_scroll = mac_tree_builder._element_cache[index]
-					print(f'Attempting to scroll {direction}: {element_to_scroll}')
-					
+
 					if not element_to_scroll.enabled:
 						msg = f'❌ Cannot scroll: Element is disabled: {element_to_scroll}'
-						print(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 						
 					scroll_successful = scroll(element_to_scroll, direction)
 					if scroll_successful:
-						print('✅ Scroll successful!')
 						return ActionResult(extracted_content=f'Successfully scrolled element with index {index} {direction}')
 					else:
 						msg = f'❌ Scroll failed for element with index {index}'
-						print(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 				else:
 					msg = f'❌ Invalid index: {index}'
-					print(msg)
 					return ActionResult(extracted_content=msg, error=msg)
 			except Exception as e:
 				msg = f'❌ An error occurred: {str(e)}'
-				print(msg)
+				logging.error(msg)
 				return ActionResult(extracted_content=msg, error=msg)
 
 		@self.registry.action(
@@ -185,33 +168,32 @@ class Controller:
 		)
 		async def open_app(app_name: str):
 			workspace = Cocoa.NSWorkspace.sharedWorkspace()
-			print(f'\nLaunching app: {app_name}...')
+			logging.info(f'\nLaunching app: {app_name}...')
 			success = workspace.launchApplication_(app_name)
 			if success:
-				print(f'✅ Launched app using name: {app_name}')
+				logging.info(f'✅ Launched app using name: {app_name}')
 			else:
-				print(f'❌ Failed to launch app with name: {app_name}. Trying lowercased...')
+				logging.error(f'❌ Failed to launch app with name: {app_name}. Trying lowercased...')
 				app_name_lower = app_name.lower()
 				success = workspace.launchApplication_(app_name_lower)
 				if success:
-					print(f'✅ Launched app using lowercased name: {app_name_lower}')
+					logging.info(f'✅ Launched app using lowercased name: {app_name_lower}')
 				else:
 					msg = f'❌ Failed to launch app: {app_name} (and lowercased: {app_name_lower})'
-					print(msg)
 					return ActionResult(extracted_content=msg, error=msg)
 
 			await asyncio.sleep(1)  # Give it a moment to appear in running apps
 			pid = None
 			for app in workspace.runningApplications():
 				if app.bundleIdentifier() and app_name.lower() in app.bundleIdentifier().lower():
-					print(f'Bundle ID: {app.bundleIdentifier()}')
+					logging.debug(f'Bundle ID: {app.bundleIdentifier()}')
 					pid = app.processIdentifier()
-					print(f'PID: {pid}')
+					logging.debug(f'PID: {pid}')
 					break
 			
 			if pid is None:
 				msg = f'Could not find running app with name: {app_name} in running applications.'
-				print(msg)
+				logging.error(msg)
 				return ActionResult(extracted_content=msg, error=msg)
 			else:
 				return ActionResult(extracted_content=f'Successfully opened app {app_name}', current_app_pid=pid)

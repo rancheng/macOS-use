@@ -708,7 +708,8 @@ def main():
     demo.queue(default_concurrency_limit=1)  # Limit to one concurrent task
     demo.launch(
         server_name="0.0.0.0",
-        server_port=int(os.getenv("SERVER_PORT", 7860)),
+        server_port=int(os.getenv('SERVER_PORT', 7860)),
+        pwa=True,
         share=False,
         show_error=True
     )
