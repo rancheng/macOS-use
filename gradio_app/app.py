@@ -1,6 +1,7 @@
 import gradio as gr
 import os
 import sys
+import json
 from pathlib import Path
 import traceback
 from typing import Optional, Generator, AsyncGenerator
@@ -66,6 +67,8 @@ class MacOSUseGradioApp:
         self.setup_logging()
         self.terminal_buffer = []
         self.automations = {}  # Dictionary to store automation flows
+        self.preferences_file = Path(__file__).parent / 'preferences.json'
+        self.preferences = self.load_preferences()
         self._cleanup_state()
         
         # Load environment variables
@@ -445,6 +448,29 @@ class MacOSUseGradioApp:
         env_var = provider_to_env.get(provider)
         return os.getenv(env_var, "") if env_var else ""
 
+    def load_preferences(self) -> dict:
+        """Load user preferences from JSON file"""
+        if self.preferences_file.exists():
+            try:
+                with open(self.preferences_file, 'r') as f:
+                    return json.load(f)
+            except Exception as e:
+                logging.error(f"Failed to load preferences: {e}")
+        return {"share_prompt": False}  # Default preferences
+
+    def save_preferences(self) -> None:
+        """Save user preferences to JSON file"""
+        try:
+            with open(self.preferences_file, 'w') as f:
+                json.dump(self.preferences, f)
+        except Exception as e:
+            logging.error(f"Failed to save preferences: {e}")
+
+    def update_share_prompt(self, value: bool) -> None:
+        """Update share_prompt preference"""
+        self.preferences["share_prompt"] = value
+        self.save_preferences()
+
     def create_interface(self):
         """Create the Gradio interface with the share prompt checkbox."""
         with gr.Blocks(title="macOS-use Interface") as demo:
@@ -460,7 +486,7 @@ class MacOSUseGradioApp:
                         )
                         share_prompt = gr.Checkbox(
                             label="Share prompt (only!) anonymously",
-                            value=False,
+                            value=self.preferences["share_prompt"],  # Load saved preference
                             info="Sharing your prompt (and prompt only) ANONYMOUSLY will help us improve our agent."
                         )
                         with gr.Row():
@@ -474,7 +500,7 @@ class MacOSUseGradioApp:
                             max_actions = gr.Slider(
                                 minimum=1,
                                 maximum=20,
-                                value=1,
+                                value=5,
                                 step=1,
                                 label="Max Actions per Step"
                             )
@@ -682,6 +708,13 @@ class MacOSUseGradioApp:
                     stop_button,
                     result_output
                 ]
+            )
+
+            # Add event handler for share_prompt changes
+            share_prompt.change(
+                fn=self.update_share_prompt,
+                inputs=[share_prompt],
+                outputs=[]
             )
 
         return demo
