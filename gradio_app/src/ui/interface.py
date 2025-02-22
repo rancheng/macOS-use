@@ -52,7 +52,7 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
                 autoscroll=True
             )
             
-            with gr.Accordion("Terminal Output", open=False) as terminal_accordion:
+            with gr.Accordion("Steps & Actions", open=False) as terminal_accordion:
                 terminal_output = gr.Textbox(
                     label="Terminal Output",
                     lines=25,
