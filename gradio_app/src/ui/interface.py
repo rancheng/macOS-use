@@ -5,16 +5,14 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
     with gr.Row():
         # Left Column (scale=2)
         with gr.Column(scale=2):
-            gr.Markdown("### Examples: How to prompt the agent")
-            gr.Markdown("#### and more importantly, how NOT to.")
-            
+            gr.Markdown("### Examples: How to prompt the agent")            
             # Category Selection Buttons
             with gr.Row():
                 quick_tasks_btn = gr.Button("Quick Tasks", variant="secondary")
-                multi_step_btn = gr.Button("Multi-Step Tasks", variant="secondary")
+                multi_step_btn = gr.Button("Multi-Step Tasks", variant="primary")
                 advanced_btn = gr.Button("Advanced Workflows", variant="secondary")
             
-            gr.Markdown("This is <span style='color: red; font-weight: bold;'>NOT a chat</span> - Check Multi-Step examples")
+            gr.Markdown("This is <span style='color: red; font-weight: bold;'>NOT a chat</span> - Check our prompt examples!")
             task_input = gr.Textbox(
                 label="Task Prompt",
                 placeholder="Enter task (e.g., 'open calculator')",
@@ -64,7 +62,7 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
             
             # Dynamic Example Containers
             with gr.Column() as examples_box:
-                gr.Markdown("#### Example Tasks")
+                gr.Markdown("#### Task prompts examples - showcasing how to prompt the agent, and more importantly, how NOT to.")
                 
                 # Quick Tasks Container
                 with gr.Column(visible=False) as quick_tasks_container:
@@ -82,7 +80,7 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
                         )
 
                 # Multi-Step Tasks Container
-                with gr.Column(visible=False) as multi_step_container:
+                with gr.Column(visible=True) as multi_step_container:
                     multi_step_tasks = app_instance.example_categories.get("Multi-Step Tasks", [])
                     for task in multi_step_tasks:
                         # Task name as a header
