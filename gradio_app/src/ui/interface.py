@@ -62,57 +62,98 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
             
             # Dynamic Example Containers
             with gr.Column() as examples_box:
-                gr.Markdown("#### Task prompts examples - showcasing how to prompt the agent, and more importantly, how NOT to.")
+                gr.Markdown("#### Task prompts examples, Try all of them!")
                 
-                # Quick Tasks Container
-                with gr.Column(visible=False) as quick_tasks_container:
-                    quick_tasks = app_instance.example_categories.get("Quick Tasks", [])
-                    quick_buttons = []
-                    for example in quick_tasks:
-                        btn = gr.Button(
-                            value=example["name"],
-                            variant="secondary"
-                        )
-                        quick_buttons.append(btn)
-                        btn.click(
-                            fn=lambda p=example["prompt"]: p,
-                            outputs=task_input
-                        )
+                # Level description markdown that will be updated
+                level_description = gr.Markdown(visible=False)
+                
+                # Scrollable container for all example categories
+                with gr.Column(elem_classes="scrollable-container") as examples_container:
+                    # Quick Tasks Container
+                    with gr.Column(visible=False) as quick_tasks_container:
+                        quick_tasks = app_instance.example_categories.get("Quick Tasks", [])
+                        quick_buttons = []
+                        for example in quick_tasks:
+                            btn = gr.Button(
+                                value=example["name"],
+                                variant="secondary"
+                            )
+                            quick_buttons.append(btn)
+                            btn.click(
+                                fn=lambda p=example["prompt"]: p,
+                                outputs=task_input
+                            )
 
-                # Multi-Step Tasks Container
-                with gr.Column(visible=True) as multi_step_container:
-                    multi_step_tasks = app_instance.example_categories.get("Multi-Step Tasks", [])
-                    for task in multi_step_tasks:
-                        # Task name as a header
-                        gr.Markdown(f"### {task['name']}")
-                        # Buttons in a horizontal row below the task name
-                        if "levels" in task:
-                            with gr.Row():
-                                for level_dict in task["levels"]:
-                                    level = level_dict["level"]
-                                    prompt = level_dict["prompt"]
-                                    gr.Button(
-                                        value=f"{level} Example",
-                                        variant="secondary"
-                                    ).click(
-                                        fn=lambda p=prompt: p,
-                                        outputs=task_input
-                                    )
-                            # Add some spacing between tasks
-                            gr.Markdown("---")
+                    # Multi-Step Tasks Container
+                    with gr.Column(visible=True) as multi_step_container:
+                        multi_step_tasks = app_instance.example_categories.get("Multi-Step Tasks", [])
+                        for task in multi_step_tasks:
+                            # Task name as a header
+                            gr.Markdown(f"### {task['name']}")
+                            # Buttons in a horizontal row below the task name
+                            if "levels" in task:
+                                with gr.Row():
+                                    for level_dict in task["levels"]:
+                                        level = level_dict["level"]
+                                        prompt = level_dict["prompt"]
+                                        level_descriptions = {
+                                            "Bad": "Might work, but since this is not a chat, it's probably not the best way to do it.",
+                                            "Good": "Will probably work, good enough for short prompt tasks",
+                                            "Expert": "Most likely to work, for complex apps and tasks, use that!"
+                                        }
+                                        btn = gr.Button(
+                                            value=f"{level} Example",
+                                            variant="secondary"
+                                        )
+                                        btn.click(
+                                            fn=lambda p=prompt, l=level, desc=level_descriptions.get(level, ""): (p, desc),
+                                            outputs=[task_input, level_description]
+                                        ).then(
+                                            fn=lambda: gr.update(visible=True),
+                                            outputs=level_description
+                                        )
+                                # Add some spacing between tasks
+                                gr.Markdown("---")
 
-                # Advanced Workflows Container
-                with gr.Column(visible=False) as advanced_tasks_container:
-                    advanced_tasks = app_instance.example_categories.get("Advanced Workflows", [])
-                    for example in advanced_tasks:
-                        btn = gr.Button(
-                            value=example["name"],
-                            variant="secondary"
-                        )
-                        btn.click(
-                            fn=lambda p=example["prompt"]: p,
-                            outputs=task_input
-                        )
+                    # Advanced Workflows Container
+                    with gr.Column(visible=False) as advanced_tasks_container:
+                        advanced_tasks = app_instance.example_categories.get("Advanced Workflows", [])
+                        for example in advanced_tasks:
+                            btn = gr.Button(
+                                value=example["name"],
+                                variant="secondary"
+                            )
+                            btn.click(
+                                fn=lambda p=example["prompt"]: p,
+                                outputs=task_input
+                            )
+
+            # Add CSS for scrollable container to the interface
+            gr.HTML("""
+                <style>
+                    .scrollable-container {
+                        height: 400px;
+                        overflow-y: auto;
+                        padding-right: 10px;
+                        margin-top: 10px;
+                    }
+                    /* Style the scrollbar */
+                    .scrollable-container::-webkit-scrollbar {
+                        width: 8px;
+                    }
+                    .scrollable-container::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 4px;
+                    }
+                    .scrollable-container::-webkit-scrollbar-thumb {
+                        background: #888;
+                        border-radius: 4px;
+                    }
+                    .scrollable-container::-webkit-scrollbar-thumb:hover {
+                        background: #555;
+                    }
+                </style>
+            """)
 
             # Category selection handlers
             def update_category_visibility(category):

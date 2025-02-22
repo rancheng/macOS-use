@@ -1,6 +1,7 @@
 EXAMPLE_CATEGORIES = {
     "Quick Tasks": [
         {"name": "Play 'Tiny Dancer'", "prompt": "Play 'Tiny Dancer' by Elton John"},
+        {"name": "Making Siri Speak", "prompt": "say Shame on YOU! i'm not Siri! but if you want to make me speak, just prompt the agent with 'say' followed by what you want."},
         {"name": "Show My Location", "prompt": "Open Maps and show my current location"},
         {"name": "Open Mail", "prompt": "Open Mail"}
     ],
@@ -8,7 +9,7 @@ EXAMPLE_CATEGORIES = {
         {
             "name": "Calculate 5 times 4",
             "levels": [
-                {"level": "Bad", "prompt": "Check what’s four times"},
+                {"level": "Bad", "prompt": "Check what’s four times five"},
                 {"level": "Good", "prompt": "Open Calculator and calculate 5 times 4"},
                 {"level": "Expert", "prompt": "Open Calculator, click the ‘5’ button, then the multiply button, then the ‘4’ button, then the equals button, and return the result"}
             ]
@@ -18,7 +19,7 @@ EXAMPLE_CATEGORIES = {
             "levels": [
                 {"level": "Bad", "prompt": "Make a note"},
                 {"level": "Good", "prompt": "Open Notes and create a new note titled 'Meeting Notes'"},
-                {"level": "Expert", "prompt": "Open Notes, click the 'New Note' button, type 'Meeting Notes' in the title field, and add the text: 'Discuss project timeline'"}
+                {"level": "Expert", "prompt": "Open Notes, click the 'New Note' button, type 'Meeting Notes' at the top as a title field, then type the text: 'Discuss project timeline''"}
             ]
         }
     ],
