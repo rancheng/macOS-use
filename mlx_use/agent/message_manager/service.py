@@ -102,8 +102,10 @@ class MessageManager:
 
 		if result:
 			for r in result:
+				logger.debug(f'Action result[message_manager]: {r.extracted_content}')
 				if r.include_in_memory:
 					if r.extracted_content:
+						logger.debug(f'Adding action result: {r.extracted_content}')
 						msg = HumanMessage(content='Action result: ' + str(r.extracted_content))
 						self._add_message_with_tokens(msg)
 					if r.error:

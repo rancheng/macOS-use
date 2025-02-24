@@ -90,6 +90,7 @@ class Controller:
 						
 					click_successful = click(element_to_click)
 					if click_successful:
+						logger.debug(f'Successfully clicked element with index {index}')
 						return ActionResult(extracted_content=f'Successfully clicked element with index {index}')
 					else:
 						msg = f'❌ Click failed for element with index {index}'
@@ -204,11 +205,41 @@ class Controller:
 		)
 		async def run_apple_script(script: str):
 			logger.info(f'Running AppleScript: {script}')
+			
+			# Wrap the original script in error handling and return value logic
+			wrapped_script = f'''
+				try
+					{script}
+					return "OK"
+				on error errMsg
+					return "ERROR: " & errMsg
+				end try
+			'''
+			
 			try:
-				subprocess.run(['osascript', '-e', script])
-				return ActionResult(extracted_content=f'Successfully ran AppleScript: {script}')
+				result = subprocess.run(
+					['osascript', '-e', wrapped_script],
+					capture_output=True,
+					text=True
+				)
+				
+				if result.returncode == 0:
+					output = result.stdout.strip()
+					if output == "OK":
+						return ActionResult(extracted_content="Success")
+					elif output.startswith("ERROR:"):
+						error_msg = output
+						logger.error(error_msg)
+						return ActionResult(extracted_content=error_msg, error=error_msg)
+					else:
+						return ActionResult(extracted_content=output)
+				else:
+					error_msg = f"AppleScript failed with return code {result.returncode}: {result.stderr.strip()}"
+					logger.error(error_msg)
+					return ActionResult(extracted_content=error_msg, error=error_msg)
+					
 			except Exception as e:
-				error_msg = f'Failed to run AppleScript: {str(e)}'
+				error_msg = f"Failed to run AppleScript: {str(e)}"
 				logger.error(error_msg)
 				return ActionResult(extracted_content=error_msg, error=error_msg)
 

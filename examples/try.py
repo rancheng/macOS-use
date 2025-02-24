@@ -61,14 +61,14 @@ async def main():
 	)
   
 	await agent_greeting.run(max_steps=25)
-	task = input()
+	task = 'Open Calculator and calculate 5 times 4'
   
 	agent_task = Agent(
 		task=task,
 		llm=llm,
 		controller=controller,
 		use_vision=False,
-		max_actions_per_step=1,
+		max_actions_per_step=4,
 		max_failures=5
 	)
 	

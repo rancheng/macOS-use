@@ -191,6 +191,7 @@ class Agent:
 
 	@time_execution_async("--step")
 	async def step(self, step_info: Optional[AgentStepInfo] = None) -> None:
+		await asyncio.sleep(1)
 		"""Execute one step of the task"""
 		logger.info(f"\n📍 Step {self.n_steps}")
 		state = None
@@ -205,7 +206,7 @@ class Agent:
 			if root:
 				state = root.get_clickable_elements_string()
 				# print the ui tree 
-				logger.debug(f"State: {state}")
+				print(f"State: {state}")
 				
 				# consider adding the full ui tree details, much more tokens!
 				# state = (
@@ -293,6 +294,9 @@ class Agent:
 		result: list[ActionResult],
 	) -> None:
 		"""Create and store history item"""
+		logger.debug("Adding history item: state=%s, model_output=%s, result=%s",
+					 state, model_output.json() if model_output else None, [r.model_dump() for r in result])
+
 		interacted_element = None
 		len_result = len(result)
 

@@ -40,131 +40,7 @@ from .element import MacElementNode
 
 logger = logging.getLogger(__name__)
 
-# Constant list of AX attributes for enhanced UI tree details 
-AX_ATTRIBUTES = [
-	"AXARIAAtomic",
-	"AXARIALive",
-	"AXARIARelevant",
-	"AXActivationPoint",
-	"AXAlternateUIVisible",
-	"AXApplication",
-	"AXBlockQuoteLevel",
-	"AXButton",
-	"AXCaretBrowsingEnabled",
-	"AXCheckBox",
-	"AXChildrenInNavigationOrder",
-	"AXCloseButton",
-	"AXCodeStyleGroup",
-	"AXContainer",
-	"AXContent",
-	"AXContentList",
-	"AXContents",
-	"AXDOMClassList",
-	"AXDOMIdentifier",
-	"AXDescription",
-	"AXEditableAncestor",
-	"AXEdited",
-	"AXElementBusy",
-	"AXEmbeddedImageDescription",
-	"AXEmptyGroup",
-	"AXEnabled",
-	"AXEndTextMarker",
-	"AXFieldset",
-	"AXFocusableAncestor",
-	"AXFocused",
-	"AXFrame",
-	"AXFullScreen",
-	"AXFullScreenButton",
-	"AXGroup",
-	"AXHasDocumentRoleAncestor",
-	"AXHasPopup",
-	"AXHasWebApplicationAncestor",
-	"AXHeading",
-	"AXHelp",
-	"AXHighestEditableAncestor",
-	"AXHorizontalOrientation",
-	"AXHorizontalScrollBar",
-	"AXIdentifier",
-	"AXImage",
-	"AXInlineText",
-	"AXInsertionPointLineNumber",
-	"AXInvalid",
-	"AXLandmarkNavigation",
-	"AXLandmarkRegion",
-	"AXLanguage",
-	"AXLayoutCount",
-	"AXLink",
-	"AXLinkRelationshipType",
-	"AXLinkUIElements",
-	"AXLinkedUIElements",
-	"AXList",
-	"AXListMarker",
-	"AXLoaded",
-	"AXLoadingProgress",
-	"AXMain",
-	"AXMaxValue",
-	"AXMenuButton",
-	"AXMinValue",
-	"AXMinimizeButton",
-	"AXMinimized",
-	"AXModal",
-	"AXNextContents",
-	"AXNumberOfCharacters",
-	"AXOrientation",
-	"AXParent",
-	"AXPath",
-	"AXPlaceholderValue",
-	"AXPopUpButton",
-	"AXPosition",
-	"AXPreventKeyboardDOMEventDispatch",
-	"AXRadioButton",
-	"AXRelativeFrame",
-	"AXRequired",
-	"AXRoleDescription",
-	"AXScrollArea",
-	"AXScrollBar",
-	"AXSections",
-	"AXSegment",
-	"AXSelected",
-	"AXSelectedChildren",
-	"AXSelectedTextMarkerRange",
-	"AXSelectedTextRange",
-	"AXSize",
-	"AXSplitGroup",
-	"AXSplitter",
-	"AXSplitters",
-	"AXStandardWindow",
-	"AXStartTextMarker",
-	"AXStaticText",
-	"AXSubrole",
-	"AXTabButton",
-	"AXTabGroup",
-	"AXTabs",
-	"AXTextArea",
-	"AXTextField",
-	"AXTextMarker",
-	"AXTextMarkerRange",
-	"AXTitle",
-	"AXToggle",
-	"AXToolbar",
-	"AXTopLevelNavigator",
-	"AXTopLevelUIElement",
-	"AXUIElement",
-	"AXUIElementCopyAttributeNames",
-	"AXUIElementCreateApplication",
-	"AXURL",
-	"AXUnknown",
-	"AXValue",
-	"AXValueAutofillAvailable",
-	"AXVerticalOrientation",
-	"AXVerticalScrollBar",
-	"AXVisibleCharacterRange",
-	"AXVisibleChildren",
-	"AXVisited",
-	"AXWebArea",
-	"AXWindow",
-	"AXZoomButton",
-]
+
 
 class MacUITreeBuilder:
 	def __init__(self):
@@ -207,13 +83,13 @@ class MacUITreeBuilder:
 			if error == kAXErrorSuccess:
 				return value_ref
 			elif error == kAXErrorAttributeUnsupported:
-				logger.debug(f"Attribute '{attribute}' is not supported for this element.")
+				# logger.debug(f"Attribute '{attribute}' is not supported for this element.")
 				return None
 			else:
-				logger.debug(f"Error getting attribute '{attribute}': {error}")
+				# logger.debug(f"Error getting attribute '{attribute}': {error}")
 				return None
 		except Exception as e:
-			logger.debug(f"Exception getting attribute '{attribute}': {str(e)}")
+			# logger.debug(f"Exception getting attribute '{attribute}': {str(e)}")
 			return None
 
 	def _get_actions(self, element: 'AXUIElement') -> List[str]:
@@ -238,12 +114,12 @@ class MacUITreeBuilder:
 		has_scroll = any(action in self.SCROLL_ACTIONS for action in actions)
 		
 		# Special handling for text input fields
-		if 'AXSetValue' in actions:
+		if 'AXSetValue' in actions and role == 'AXTextField':
 			enabled = self._get_attribute(element, 'AXEnabled')
 			return bool(enabled)
 
 		# Special handling for buttons with AXPress
-		if 'AXPress' in actions and role == 'AXButton':
+		if 'AXPress' in actions and role in ['AXButton', 'AXLink']:
 			enabled = self._get_attribute(element, 'AXEnabled')
 			return bool(enabled)
 
@@ -336,9 +212,22 @@ class MacUITreeBuilder:
 			logger.error(f'Error processing element: {str(e)}')
 			return None
 
+	def cleanup(self):
+		"""Cleanup observers"""
+		pass  # Temporarily do nothing
+
+	def reset_state(self):
+		"""Reset the state between major steps"""
+		self.highlight_index = 0  # Reset index
+		self._element_cache.clear()  # Clear cache
+		self._processed_elements.clear()  # Clear processed set
+
 	async def build_tree(self, pid: Optional[int] = None) -> Optional[MacElementNode]:
 		"""Build UI tree for a specific application"""
 		try:
+			# Reset state before building new tree
+			self.reset_state()
+
 			if pid is None and self._current_app_pid is None:
 				logger.debug('No app is currently open - waiting for app to be launched')
 				raise ValueError('No app is currently open')
@@ -374,6 +263,8 @@ class MacUITreeBuilder:
 
 			logger.debug('Trying to get the main window...')
 			error, main_window_ref = AXUIElementCopyAttributeValue(app_ref, kAXMainWindowAttribute, None)
+			if error == '-25212':
+				return None, "Window not found"
 			if error != kAXErrorSuccess or not main_window_ref:
 				logger.warning(f'Could not get main window (error: {error}), trying fallback attribute AXWindows')
 				error, windows = AXUIElementCopyAttributeValue(app_ref, kAXWindowsAttribute, None)
@@ -406,7 +297,3 @@ class MacUITreeBuilder:
 				import traceback
 				traceback.print_exc()
 			return None
-
-	def cleanup(self):
-		"""Cleanup observers"""
-		pass  # Temporarily do nothing
