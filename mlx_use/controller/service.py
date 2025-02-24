@@ -91,7 +91,10 @@ class Controller:
 					click_successful = click(element_to_click)
 					if click_successful:
 						logger.debug(f'Successfully clicked element with index {index}')
-						return ActionResult(extracted_content=f'Successfully clicked element with index {index}')
+						return ActionResult(
+							extracted_content=f'Successfully clicked element with index {index}',
+							include_in_memory=True
+						)
 					else:
 						msg = f'❌ Click failed for element with index {index}'
 						logging.error(msg)

@@ -185,6 +185,11 @@ class MacUITreeBuilder:
 			if subrole:
 				node.attributes['subrole'] = subrole
 
+			# Determine if element should be included as context
+			is_context = (role in ['AXStaticText', 'AXTextField'] and 
+						'AXSetValue' not in actions and
+						(parent is None or parent.role == 'AXWindow' or parent.is_interactive))
+
 			# Determine interactivity based on actions
 			node.is_interactive = self._is_interactive(element, role, actions)
 			
@@ -193,6 +198,10 @@ class MacUITreeBuilder:
 				self._element_cache[self.highlight_index] = node
 				self.highlight_index += 1
 				logger.debug(f'Added interactive element {role} with actions: {actions}')
+			elif is_context:
+				node.highlight_index = None
+				self._element_cache[f'ctx_{element_identifier}'] = node
+				logger.debug(f'Added context element {role}')
 
 			# Process children
 			children_ref = self._get_attribute(element, kAXChildrenAttribute)
