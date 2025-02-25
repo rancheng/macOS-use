@@ -75,6 +75,8 @@ class MacOSUseGradioApp:
         """Stop the running agent"""
         if self.agent and self.is_running:
             self.is_running = False
+            # Set the agent's _stopped flag to True to properly stop the agent
+            self.agent._stopped = True
             return (
                 self.get_terminal_output() + "\nAgent stopped by user",
                 gr.update(interactive=True),
@@ -284,6 +286,8 @@ class MacOSUseGradioApp:
                         await asyncio.sleep(0.1)
                     
                     if not agent_task.done():
+                        # Make sure to set the agent's _stopped flag when cancelling the task
+                        self.agent._stopped = True
                         agent_task.cancel()
                         await asyncio.sleep(0.1)  # Allow time for cancellation
                     else:
@@ -408,6 +412,8 @@ class MacOSUseGradioApp:
                     await asyncio.sleep(0.1)
                 
                 if not agent_task.done():
+                    # Make sure to set the agent's _stopped flag when cancelling the task
+                    self.agent._stopped = True
                     agent_task.cancel()
                     await asyncio.sleep(0.1)  # Allow time for cancellation
                 else:

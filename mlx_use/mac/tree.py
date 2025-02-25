@@ -197,7 +197,6 @@ class MacUITreeBuilder:
 				node.highlight_index = self.highlight_index
 				self._element_cache[self.highlight_index] = node
 				self.highlight_index += 1
-				logger.debug(f'Added interactive element {role} with actions: {actions}')
 			elif is_context:
 				node.highlight_index = None
 				self._element_cache[f'ctx_{element_identifier}'] = node
