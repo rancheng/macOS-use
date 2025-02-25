@@ -35,7 +35,7 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
                 max_actions = gr.Slider(
                     minimum=1,
                     maximum=20,
-                    value=3,
+                    value=5,
                     step=1,
                     label="Max Actions per Step"
                 )

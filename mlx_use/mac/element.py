@@ -75,24 +75,34 @@ class MacElementNode:
         return role_str
 
     def get_clickable_elements_string(self) -> str:
-        """Convert the UI tree to a string representation focusing on interactive elements"""
+        """Convert the UI tree to a string representation focusing on interactive and context elements"""
         formatted_text = []
 
         def process_node(node: 'MacElementNode', depth: int) -> None:
-            if node.highlight_index is not None:
-                # Include more information for interactive elements
-                attrs_str = ''
-                important_attrs = ['title', 'value', 'description', 'enabled']
-                for key in important_attrs:
-                    if key in node.attributes:
-                        attrs_str += f' {key}="{node.attributes[key]}"'
-                
-                # Add actions if available
-                if node.actions:
-                    attrs_str += f' actions="{", ".join(node.actions)}"'
+            # Build attributes string
+            attrs_str = ''
+            important_attrs = ['title', 'value', 'description', 'enabled']
+            for key in important_attrs:
+                if key in node.attributes:
+                    attrs_str += f' {key}="{node.attributes[key]}"'
+            
+            # Add actions if available
+            if node.actions:
+                attrs_str += f' actions="{", ".join(node.actions)}"'
 
+            # Include both interactive and context elements
+            if node.highlight_index is not None:
+                # Interactive element with numeric index
                 formatted_text.append(
-                    f'{node.highlight_index}[:]<{node.role}{attrs_str}>'
+                    f'{node.highlight_index}[:]<{node.role}{attrs_str}> [interactive]'
+                )
+            # Check if this is a context element (non-interactive AXStaticText or read-only AXTextField)
+            elif (node.role in ['AXStaticText', 'AXTextField'] and 
+                  not node.is_interactive and 
+                  (node.parent is None or node.parent.role == 'AXWindow' or node.parent.is_interactive)):
+                # Context element with "_" index
+                formatted_text.append(
+                    f'_[:]<{node.role}{attrs_str}> [context]'
                 )
 
             for child in node.children:
