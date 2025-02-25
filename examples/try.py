@@ -40,11 +40,11 @@ def set_llm(llm_provider:str = None):
 		except Exception as e:
 			print(f"Error while getting API key: {e}")
 			api_key = None
-		return ChatAnthropic(model='claude-3-5-sonnet-20240620',  api_key=SecretStr(api_key))
+		return ChatAnthropic(model='claude-3-7-sonnet-20250219',  api_key=SecretStr(api_key))
 
-llm = set_llm('anthropic')
 llm = set_llm('google')
 llm = set_llm('OAI')
+llm = set_llm('anthropic')
 
 controller = Controller()
 
@@ -61,7 +61,7 @@ async def main():
 	)
   
 	await agent_greeting.run(max_steps=25)
-	task = 'Open Calculator and calculate 5 times 4'
+	task = input("Enter the task: ")
   
 	agent_task = Agent(
 		task=task,
