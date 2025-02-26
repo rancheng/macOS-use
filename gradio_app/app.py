@@ -1,5 +1,6 @@
 import os
 import sys
+
 from pathlib import Path
 import gradio as gr
 
@@ -65,10 +66,17 @@ def create_interface(app_instance: MacOSUseGradioApp):
             return format_agents_list(agents)
 
         def update_provider(provider):
+            # Save the provider preference
+            app_instance.update_llm_preferences(provider, app_instance.llm_models.get(provider, [])[0])
             return {
                 llm_model: gr.update(choices=app_instance.llm_models.get(provider, [])),
                 api_key: gr.update(value=app_instance.get_saved_api_key(provider))
             }
+            
+        def update_model(provider, model):
+            # Save the model preference
+            app_instance.update_llm_preferences(provider, model)
+            return None
 
         # Set up event handlers
         add_automation_btn.click(
@@ -153,6 +161,12 @@ def create_interface(app_instance: MacOSUseGradioApp):
             fn=update_provider,
             inputs=llm_provider,
             outputs=[llm_model, api_key]
+        )
+        
+        llm_model.change(
+            fn=update_model,
+            inputs=[llm_provider, llm_model],
+            outputs=None
         )
 
         return demo

@@ -221,31 +221,65 @@ class MacUITreeBuilder:
 			return None
 
 	def cleanup(self):
-		"""Cleanup observers"""
-		pass  # Temporarily do nothing
+		"""Cleanup observers and release resources"""
+		# Clear the element cache to prevent holding on to stale references
+		self._element_cache.clear()
+		# Clear processed elements set
+		self._processed_elements.clear()
+		# Reset highlight index
+		self.highlight_index = 0
+		# Reset current app PID
+		self._current_app_pid = None
+		
+		# Force garbage collection to release any Objective-C references
+		import gc
+		gc.collect()
+		
+		# Log the cleanup
+		logger.debug("MacUITreeBuilder cleanup completed: all references released")
 
 	def reset_state(self):
 		"""Reset the state between major steps"""
 		self.highlight_index = 0  # Reset index
 		self._element_cache.clear()  # Clear cache
 		self._processed_elements.clear()  # Clear processed set
+		
+		# Don't reset _current_app_pid here as it's needed for continuity between steps
+		
+		# Log the reset
+		logger.debug("MacUITreeBuilder state reset")
 
 	async def build_tree(self, pid: Optional[int] = None) -> Optional[MacElementNode]:
 		"""Build UI tree for a specific application"""
 		try:
-			# Reset state before building new tree
-			self.reset_state()
+			# Reset processed elements and cache before building new tree
+			self._processed_elements.clear()
+			self._element_cache.clear()
+			self.highlight_index = 0
 
 			if pid is None and self._current_app_pid is None:
 				logger.debug('No app is currently open - waiting for app to be launched')
 				raise ValueError('No app is currently open')
 
 			if pid is not None:
+				# Always update with the latest PID if provided
 				self._current_app_pid = pid
 
-				if not self._setup_observer(self._current_app_pid):
-					logger.warning('Failed to setup accessibility observer')
+			# Verify the process is still running
+			import subprocess
+			try:
+				result = subprocess.run(['ps', '-p', str(self._current_app_pid)], capture_output=True, text=True)
+				if result.returncode != 0:
+					logger.error(f"Process with PID {self._current_app_pid} is no longer running")
+					self._current_app_pid = None
+					self.cleanup()
 					return None
+			except Exception as e:
+				logger.error(f"Error checking process status: {e}")
+
+			if not self._setup_observer(self._current_app_pid):
+				logger.warning('Failed to setup accessibility observer')
+				return None
 
 			logger.debug(f'Creating AX element for pid {self._current_app_pid}')
 			app_ref = AXUIElementCreateApplication(self._current_app_pid)
@@ -258,6 +292,12 @@ class MacUITreeBuilder:
 				logger.error(f'Error getting role attribute: {error}')
 				if error == kAXErrorAPIDisabled:
 					logger.error('Accessibility is not enabled. Please enable it in System Settings.')
+				elif error == -25204:
+					logger.error(f'Error -25204: Accessibility connection failed. The app may have been closed or restarted.')
+					# Reset current app PID as it's no longer valid
+					self._current_app_pid = None
+					# Force cleanup to release any hanging references
+					self.cleanup()
 				return None
 
 			root = MacElementNode(

@@ -34,6 +34,7 @@ class MacOSUseGradioApp:
         self._cleanup_state()
         self.example_categories = EXAMPLE_CATEGORIES
         self.llm_models = LLM_MODELS
+        self.current_task = None  # Store the current running task
         
         # Load environment variables
         load_dotenv()
@@ -42,6 +43,7 @@ class MacOSUseGradioApp:
         """Reset all state variables"""
         self.is_running = False
         self.agent = None
+        self.current_task = None  # Clear current task reference
         self.terminal_buffer = []
         while not self.log_queue.empty():
             try:
@@ -75,8 +77,17 @@ class MacOSUseGradioApp:
         """Stop the running agent"""
         if self.agent and self.is_running:
             self.is_running = False
-            # Set the agent's _stopped flag to True to properly stop the agent
-            self.agent._stopped = True
+            
+            # Set the agent's internal stop flag if it exists
+            if hasattr(self.agent, '_stopped'):
+                self.agent._stopped = True
+                
+            # Explicitly cancel the task if it exists
+            if self.current_task and not self.current_task.done():
+                self.current_task.cancel()
+                
+            self._cleanup_state()
+            
             return (
                 self.get_terminal_output() + "\nAgent stopped by user",
                 gr.update(interactive=True),
@@ -233,6 +244,12 @@ class MacOSUseGradioApp:
         self.preferences["share_prompt"] = value
         self.save_preferences()
 
+    def update_llm_preferences(self, provider: str, model: str) -> None:
+        """Update LLM provider and model preferences"""
+        self.preferences["llm_provider"] = provider
+        self.preferences["llm_model"] = model
+        self.save_preferences()
+
     async def run_automation(
         self,
         automation_name: str,
@@ -272,6 +289,7 @@ class MacOSUseGradioApp:
                 try:
                     # Start the agent run
                     agent_task = asyncio.create_task(self.agent.run(max_steps=agent_config["max_steps"]))
+                    self.current_task = agent_task  # Store reference to current task
                     
                     # While the agent is running, yield updates periodically
                     while not agent_task.done() and self.is_running:
@@ -286,8 +304,6 @@ class MacOSUseGradioApp:
                         await asyncio.sleep(0.1)
                     
                     if not agent_task.done():
-                        # Make sure to set the agent's _stopped flag when cancelling the task
-                        self.agent._stopped = True
                         agent_task.cancel()
                         await asyncio.sleep(0.1)  # Allow time for cancellation
                     else:
@@ -396,6 +412,7 @@ class MacOSUseGradioApp:
             try:
                 # Start the agent run
                 agent_task = asyncio.create_task(self.agent.run(max_steps=max_steps))
+                self.current_task = agent_task  # Store reference to current task
                 
                 # While the agent is running, yield updates periodically
                 while not agent_task.done() and self.is_running:
@@ -412,8 +429,6 @@ class MacOSUseGradioApp:
                     await asyncio.sleep(0.1)
                 
                 if not agent_task.done():
-                    # Make sure to set the agent's _stopped flag when cancelling the task
-                    self.agent._stopped = True
                     agent_task.cancel()
                     await asyncio.sleep(0.1)  # Allow time for cancellation
                 else:

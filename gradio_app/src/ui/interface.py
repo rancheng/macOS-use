@@ -252,20 +252,30 @@ def create_automations_tab(app_instance) -> List[gr.components.Component]:
     ]
 
 def create_configuration_tab(app_instance) -> List[gr.components.Component]:
+    # Get saved provider and model from preferences, or use defaults
+    default_provider = app_instance.preferences.get("llm_provider", "OpenAI")
+    
     llm_provider = gr.Dropdown(
         choices=list(app_instance.llm_models.keys()),
         label="LLM Provider",
-        value="OpenAI"
+        value=default_provider
     )
+    
+    # Get the models for the current provider
+    available_models = app_instance.llm_models.get(default_provider, [])
+    default_model = app_instance.preferences.get("llm_model", available_models[0] if available_models else None)
+    
     llm_model = gr.Dropdown(
-        choices=app_instance.llm_models["OpenAI"],
-        label="Model"
+        choices=available_models,
+        label="Model",
+        value=default_model
     )
+    
     api_key = gr.Textbox(
         label="API Key",
         type="password",
         placeholder="Enter your API key",
-        value=app_instance.get_saved_api_key("OpenAI")
+        value=app_instance.get_saved_api_key(default_provider)
     )
     
     return [llm_provider, llm_model, api_key] 
