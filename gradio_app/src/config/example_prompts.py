@@ -3,7 +3,7 @@ EXAMPLE_CATEGORIES = {
         {"name": "Play 'Tiny Dancer'", "prompt": "Play 'Tiny Dancer' by Elton John"},
         {"name": "Making Siri Speak", "prompt": "say Shame on YOU! i'm not Siri! but if you want to make me speak, just prompt the agent with 'say' followed by what you want."},
         {"name": "Show My Location", "prompt": "Open Maps and show my current location"},
-        {"name": "Open Mail and quit", "prompt": "Open Mail"}
+        {"name": "Mail", "prompt": "Open Mail and quit"}
     ],
     "Multi-Step Tasks": [
         {

@@ -300,6 +300,14 @@ class MacOSUseGradioApp:
                     while not agent_task.done() and self.is_running:
                         current_output = self.get_terminal_output()
                         if current_output != last_update:
+                            # Check if we've had a "done" action
+                            if "\"done\":" in current_output and "📄 Result:" in current_output:
+                                logging.info("Detected 'done' action, stopping agent")
+                                self.is_running = False
+                                if not agent_task.done():
+                                    agent_task.cancel()
+                                break
+                                
                             yield (
                                 f"Running agent {i+1}/{len(automation['agents'])}\n{current_output}",
                                 gr.update(interactive=False),
@@ -425,9 +433,8 @@ class MacOSUseGradioApp:
                 agent_task = asyncio.create_task(self.agent.run(max_steps=max_steps))
                 self.current_task = agent_task  # Store reference to current task
                 
-                # Track consecutive "done" actions to detect when to stop
-                consecutive_done_actions = 0
-                max_consecutive_done = 2  # Stop after 2 consecutive done actions
+                # Track "done" actions to detect when to stop
+                # Stop immediately after a single done action
                 
                 # While the agent is running, yield updates periodically
                 while not agent_task.done() and self.is_running:
@@ -435,17 +442,13 @@ class MacOSUseGradioApp:
                     if current_output != last_update:
                         result_text = self.extract_result_text(current_output)
                         
-                        # Check if we've had multiple consecutive "done" actions
+                        # Check if we've had a "done" action
                         if "\"done\":" in current_output and "📄 Result:" in current_output:
-                            consecutive_done_actions += 1
-                            if consecutive_done_actions >= max_consecutive_done:
-                                logging.info("Detected multiple consecutive 'done' actions, stopping agent")
-                                self.is_running = False
-                                if not agent_task.done():
-                                    agent_task.cancel()
-                                break
-                        else:
-                            consecutive_done_actions = 0
+                            logging.info("Detected 'done' action, stopping agent")
+                            self.is_running = False
+                            if not agent_task.done():
+                                agent_task.cancel()
+                            break
                             
                         yield (
                             current_output,
