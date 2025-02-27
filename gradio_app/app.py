@@ -28,7 +28,7 @@ def create_interface(app_instance: MacOSUseGradioApp):
         
         with gr.Tab("Configuration"):
             config_components = create_configuration_tab(app_instance)
-            llm_provider, llm_model, api_key = config_components
+            llm_provider, llm_model, api_key, share_terminal_cfg = config_components
 
         # Event handlers
         def format_agents_list(agents):
@@ -78,6 +78,18 @@ def create_interface(app_instance: MacOSUseGradioApp):
             app_instance.update_llm_preferences(provider, model)
             return None
 
+        # Create a wrapper function for run_agent that gets share_terminal from preferences
+        async def run_agent_wrapper(task, max_steps, max_actions, llm_provider, llm_model, api_key, share_prompt):
+            """Wrapper for run_agent that adds share_terminal from preferences"""
+            # Get the current value of share_terminal from preferences
+            share_terminal = app_instance.preferences.get("share_terminal", True)
+            
+            # The run_agent method returns an AsyncGenerator, so we need to yield each value
+            async for output in app_instance.run_agent(
+                task, max_steps, max_actions, llm_provider, llm_model, api_key, share_prompt, share_terminal
+            ):
+                yield output
+
         # Set up event handlers
         add_automation_btn.click(
             fn=add_automation_and_clear,
@@ -121,7 +133,7 @@ def create_interface(app_instance: MacOSUseGradioApp):
         )
 
         run_button.click(
-            fn=app_instance.run_agent,
+            fn=run_agent_wrapper,
             inputs=[
                 task_input,
                 max_steps,
@@ -154,6 +166,12 @@ def create_interface(app_instance: MacOSUseGradioApp):
         share_prompt.change(
             fn=app_instance.update_share_prompt,
             inputs=[share_prompt],
+            outputs=[]
+        )
+        
+        share_terminal_cfg.change(
+            fn=app_instance.update_share_terminal,
+            inputs=[share_terminal_cfg],
             outputs=[]
         )
 

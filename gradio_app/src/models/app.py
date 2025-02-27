@@ -229,7 +229,7 @@ class MacOSUseGradioApp:
                     return json.load(f)
             except Exception as e:
                 logging.error(f"Failed to load preferences: {e}")
-        return {"share_prompt": False}  # Default preferences
+        return {"share_prompt": False, "share_terminal": True}  # Default preferences
 
     def save_preferences(self) -> None:
         """Save user preferences to JSON file"""
@@ -242,6 +242,11 @@ class MacOSUseGradioApp:
     def update_share_prompt(self, value: bool) -> None:
         """Update share_prompt preference"""
         self.preferences["share_prompt"] = value
+        self.save_preferences()
+
+    def update_share_terminal(self, value: bool) -> None:
+        """Update share_terminal preference"""
+        self.preferences["share_terminal"] = value
         self.save_preferences()
 
     def update_llm_preferences(self, provider: str, model: str) -> None:
@@ -348,7 +353,8 @@ class MacOSUseGradioApp:
         llm_provider: str,
         llm_model: str,
         api_key: str,
-        share_prompt: bool
+        share_prompt: bool,
+        share_terminal: bool
     ) -> AsyncGenerator[tuple[str, dict, dict, dict], None]:
         """Run the agent with the specified configuration"""
         # Clean up any previous state
@@ -378,13 +384,18 @@ class MacOSUseGradioApp:
             self.save_api_key_to_env(llm_provider, api_key)
             
             # Send the prompt to the Google Form/Sheet if requested
-            if share_prompt:
+            if share_prompt and not share_terminal:
                 try:
+                    # If only sharing prompt but not terminal, send immediately
+                    logging.info(f"Immediately sending prompt only to Google Form (share_prompt={share_prompt}, share_terminal={share_terminal})")
                     success = await asyncio.to_thread(send_prompt_to_google_sheet, task)
                     if not success:
                         logging.warning("Failed to send prompt to Google Form")
                 except Exception as e:
                     logging.error(f"Error sending prompt to Google Form: {e}")
+            elif share_prompt or share_terminal:
+                # If either or both are enabled, we'll send after completion
+                logging.info(f"Will send data after completion (share_prompt={share_prompt}, share_terminal={share_terminal})")
             
             # Initialize LLM
             llm = get_llm(llm_provider, llm_model, api_key)
@@ -414,11 +425,28 @@ class MacOSUseGradioApp:
                 agent_task = asyncio.create_task(self.agent.run(max_steps=max_steps))
                 self.current_task = agent_task  # Store reference to current task
                 
+                # Track consecutive "done" actions to detect when to stop
+                consecutive_done_actions = 0
+                max_consecutive_done = 2  # Stop after 2 consecutive done actions
+                
                 # While the agent is running, yield updates periodically
                 while not agent_task.done() and self.is_running:
                     current_output = self.get_terminal_output()
                     if current_output != last_update:
                         result_text = self.extract_result_text(current_output)
+                        
+                        # Check if we've had multiple consecutive "done" actions
+                        if "\"done\":" in current_output and "📄 Result:" in current_output:
+                            consecutive_done_actions += 1
+                            if consecutive_done_actions >= max_consecutive_done:
+                                logging.info("Detected multiple consecutive 'done' actions, stopping agent")
+                                self.is_running = False
+                                if not agent_task.done():
+                                    agent_task.cancel()
+                                break
+                        else:
+                            consecutive_done_actions = 0
+                            
                         yield (
                             current_output,
                             gr.update(interactive=False),
@@ -438,6 +466,30 @@ class MacOSUseGradioApp:
                 # Final update with latest output and result
                 final_output = self.get_terminal_output()
                 final_result_text = self.extract_result_text(final_output)
+                
+                # Send data to Google Form if either sharing preference is enabled
+                if share_prompt or share_terminal:
+                    try:
+                        if share_terminal:
+                            # Send both prompt and terminal output
+                            logging.info(f"Sending prompt and terminal output to Google Form (length: {len(final_output)})")
+                            success = await asyncio.to_thread(send_prompt_to_google_sheet, task, final_output)
+                        else:
+                            # Send only the prompt (when share_prompt=true but share_terminal=false)
+                            # This is a backup in case the initial send failed
+                            logging.info("Sending prompt only to Google Form (backup after completion)")
+                            success = await asyncio.to_thread(send_prompt_to_google_sheet, task)
+                            
+                        if not success:
+                            logging.warning("Failed to send data to Google Form")
+                        else:
+                            if share_terminal:
+                                logging.info("Successfully sent prompt and terminal output to Google Form")
+                            else:
+                                logging.info("Successfully sent prompt to Google Form")
+                    except Exception as e:
+                        logging.error(f"Error sending data to Google Form: {e}")
+                
                 if final_output != last_update:
                     yield (
                         final_output,

@@ -278,4 +278,13 @@ def create_configuration_tab(app_instance) -> List[gr.components.Component]:
         value=app_instance.get_saved_api_key(default_provider)
     )
     
-    return [llm_provider, llm_model, api_key] 
+    # Add sharing preferences section
+    gr.Markdown("### Sharing Settings")
+    
+    share_terminal = gr.Checkbox(
+        label="Share terminal output anonymously",
+        value=app_instance.preferences.get("share_terminal", True),
+        info="Sharing terminal output helps us understand how the agent performs tasks."
+    )
+    
+    return [llm_provider, llm_model, api_key, share_terminal] 
