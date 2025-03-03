@@ -49,8 +49,8 @@ class MacUITreeBuilder:
 		self._observers = {}
 		self._processed_elements = set()
 		self._current_app_pid = None
-		self.max_depth = 10
-		self.max_children = 50
+		self.max_depth = 30
+		self.max_children = 250
 
 		# Define interactive actions we care about
 		self.INTERACTIVE_ACTIONS = {
@@ -206,6 +206,10 @@ class MacUITreeBuilder:
 			children_ref = self._get_attribute(element, kAXChildrenAttribute)
 			if children_ref and depth < self.max_depth:
 				try:
+					children_count = len(list(children_ref))
+					if children_count > self.max_children:
+						logger.error(f"Max children limit ({self.max_children}) exceeded for element {role}. Found {children_count} children. Some elements will not be processed.")
+					
 					children_list = list(children_ref)[:self.max_children]
 					for child in children_list:
 						child_node = await self._process_element(child, pid, node, depth + 1)
@@ -213,6 +217,8 @@ class MacUITreeBuilder:
 							node.children.append(child_node)
 				except Exception as e:
 					logger.warning(f"Error processing children: {e}")
+			elif children_ref and depth >= self.max_depth:
+				logger.error(f"Max depth limit ({self.max_depth}) reached for element {role}. Children at depth {depth} will not be processed.")
 
 			return node
 
