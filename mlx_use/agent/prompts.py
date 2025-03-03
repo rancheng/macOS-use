@@ -59,6 +59,7 @@ class SystemPrompt:
    - Context elements: "_[:]<type> [context]" (e.g., "_[:]<AXStaticText value='20'>").
    - Use context elements to verify outcomes (e.g., check results after actions).
    - Use attributes (description, title, value) to identify elements accurately.
+   - When providing an element index to click, use the actions list attribute to choose which action to use.
 
 5. TASK COMPLETION:
    - Use the "done" action when the task is complete.
@@ -97,7 +98,7 @@ class SystemPrompt:
 INPUT STRUCTURE:
 1. Current App: Active macOS application (or "None" if none open)
 2. UI Elements: List in the format:
-   - Interactive: '[index][:]<type> [interactive]' (e.g., '1[:]<AXButton>').
+   - Interactive: '[index][:]<type> [interactive]' (e.g., '1[:]<AXButton enabled="True" actions="AXPress">').
    - Context: '_[:]<type> [context]' (e.g., '_[:]<AXStaticText value="20">').
 3. Action Results: Feedback from the previous step's actions (e.g., "Clicked element 2 successfully").
 

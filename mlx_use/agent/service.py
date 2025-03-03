@@ -206,7 +206,7 @@ class Agent:
 			if root:
 				state = root.get_clickable_elements_string()
 				# print the ui tree 
-				logger.debug(f"State: {state}")
+				print(f"\n\nstep {self.n_steps} \nState: {state}\n\n")
 				
 				# consider adding the full ui tree details, much more tokens!
 				# state = (

@@ -40,7 +40,7 @@ def perform_action(element: MacElementNode, action: str) -> bool:
 		logger.error(f'❌ Error performing {action} on element: {element}, {e}')
 		return False
 
-def click(element: MacElementNode) -> bool:
+def click(element: MacElementNode, action: str) -> bool:
 	"""Simulates a click on a Mac UI element."""
 	if not element._element:
 		logger.error(f'❌ Cannot click: Element reference is missing for {element}')
@@ -51,12 +51,13 @@ def click(element: MacElementNode) -> bool:
 		logger.error(f'❌ Cannot click: Element is disabled: {element}')
 		return False
 
-	# Verify element has the press action
-	if 'AXPress' not in element.actions:
-		logger.error(f'❌ Cannot click: Element does not support press action: {element}')
+	# Verify element has the press/click action
+	actions = ['AXPress', 'AXClick', 'AXOpen', "AXConfirm", "AXShowMenu"]
+	if action not in actions:
+		logger.error(f'❌ Cannot click: Element does not support {action} action: {element}')
 		return False
 
-	return perform_action(element, 'AXPress')
+	return perform_action(element, action)
 
 def type_into(element: MacElementNode, text: str, submit: bool = False) -> bool:
     """Simulates typing text into a Mac UI element with action-based submission"""

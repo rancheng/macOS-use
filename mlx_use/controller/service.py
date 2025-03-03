@@ -73,10 +73,10 @@ class Controller:
 				return ActionResult(extracted_content=msg, error=msg)
 
 		@self.registry.action(
-				'Click element',
+				'Click element and choose action',
 				param_model=ClickElementAction,
 				  requires_mac_builder=True)
-		async def click_element(index: int, mac_tree_builder: MacUITreeBuilder):
+		async def click_element(index: int, action: str, mac_tree_builder: MacUITreeBuilder):
 			logger.info(f'Clicking element {index}')
 
 			try:
@@ -88,7 +88,7 @@ class Controller:
 						logging.error(msg)
 						return ActionResult(extracted_content=msg, error=msg)
 						
-					click_successful = click(element_to_click)
+					click_successful = click(element_to_click, action)
 					if click_successful:
 						logger.debug(f'Successfully clicked element with index {index}')
 						return ActionResult(
@@ -194,10 +194,28 @@ class Controller:
 					pid = app.processIdentifier()
 					logging.debug(f'PID: {pid}')
 					break
-			
+
+			# If no PID is found, try to find the app by name with pgrep -i 
+			if pid is None:
+				try:
+					result = subprocess.run(
+						['pgrep', '-i', app_name],
+						capture_output=True,
+						text=True
+					)
+					if result.returncode == 0 and result.stdout.strip():
+						# pgrep might return multiple PIDs, take the first one
+						pid = int(result.stdout.strip().split('\n')[0])
+						logging.debug(f'Found PID using pgrep: {pid}')
+					else:
+						logging.error(f'❌ Failed to find PID for app: {app_name} with pgrep')
+				except Exception as e:
+					logging.error(f'❌ Error while running pgrep: {str(e)}')
+				
 			if pid is None:
 				msg = f'Could not find running app with name: {app_name} in running applications.'
 				logging.error(msg)
+				logger.error(f'running apps: {workspace.runningApplications()}')
 				return ActionResult(extracted_content=msg, error=msg)
 			else:
 				return ActionResult(extracted_content=f'Successfully opened app {app_name}', current_app_pid=pid)

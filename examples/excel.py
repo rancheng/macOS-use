@@ -55,7 +55,7 @@ agent = Agent(
 
 
 async def main():
-	await agent.run(max_steps=25)
+	await agent.run(max_steps=10)
 
 	# input('Press Enter to close the browser...')
 

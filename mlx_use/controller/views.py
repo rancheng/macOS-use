@@ -15,6 +15,7 @@ class InputTextAction(BaseModel):
 
 class ClickElementAction(BaseModel):
 	index: int
+	action: str
 
 class RightClickElementAction(BaseModel):
 	index: int
