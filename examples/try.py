@@ -19,32 +19,28 @@ def set_llm(llm_provider:str = None):
 	if not llm_provider:
 		raise ValueError("No llm provider was set")
 	
-	if llm_provider == "OAI":
-		try:
-			api_key = os.getenv('OPENAI_API_KEY')
-		except Exception as e:
-			print(f"Error while getting API key: {e}")
-			api_key = None
-		return ChatOpenAI(model='gpt-4o', api_key=SecretStr(api_key))
+	if llm_provider == "OAI" and os.getenv('OPENAI_API_KEY'):
+		return ChatOpenAI(model='gpt-4', api_key=SecretStr(os.getenv('OPENAI_API_KEY')))
 	
-	if llm_provider == "google":
-		try:
-			api_key = os.getenv('GEMINI_API_KEY')
-		except Exception as e:
-			print(f"Error while getting API key: {e}")
-			api_key = None
-		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp',  api_key=SecretStr(api_key))
-	if llm_provider == "anthropic":
-		try:
-			api_key = os.getenv('ANTHROPIC_API_KEY')
-		except Exception as e:
-			print(f"Error while getting API key: {e}")
-			api_key = None
-		return ChatAnthropic(model='claude-3-7-sonnet-20250219',  api_key=SecretStr(api_key))
+	if llm_provider == "google" and os.getenv('GEMINI_API_KEY'):
+		return ChatGoogleGenerativeAI(model='gemini-2.0-flash-exp', api_key=SecretStr(os.getenv('GEMINI_API_KEY')))
+	
+	if llm_provider == "anthropic" and os.getenv('ANTHROPIC_API_KEY'):
+		return ChatAnthropic(model='claude-3-sonnet-20240229', api_key=SecretStr(os.getenv('ANTHROPIC_API_KEY')))
+	
+	return None
 
-llm = set_llm('google')
-llm = set_llm('OAI')
-llm = set_llm('anthropic')
+# Try to set LLM based on available API keys
+llm = None
+if os.getenv('GEMINI_API_KEY'):
+	llm = set_llm('google')
+elif os.getenv('OPENAI_API_KEY'):
+	llm = set_llm('OAI')
+elif os.getenv('ANTHROPIC_API_KEY'):
+	llm = set_llm('anthropic')
+
+if not llm:
+	raise ValueError("No API keys found. Please set at least one of GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY in your .env file")
 
 controller = Controller()
 

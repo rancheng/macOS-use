@@ -185,3 +185,4 @@ gcp-login.json
 local/
 .cursor/
 docs/
+@preferences.json
