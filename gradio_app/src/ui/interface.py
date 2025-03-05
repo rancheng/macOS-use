@@ -13,11 +13,17 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
                 advanced_btn = gr.Button("Advanced Workflows", variant="secondary")
             
             gr.Markdown("This is <span style='color: red; font-weight: bold;'>NOT a chat</span> - Check our prompt examples!")
-            task_input = gr.Textbox(
-                label="Task Prompt",
-                placeholder="Enter task (e.g., 'open calculator')",
-                lines=3
-            )
+            
+            with gr.Group():
+                with gr.Row():
+                    gr.Markdown("<div style='text-align: center; width: 100%; padding-top: 3px;'>Task Prompt</div>")
+                    refine_prompt_btn = gr.Button("Refine Prompt", size="sm")
+                with gr.Row():
+                    task_input = gr.Textbox(
+                        label="",
+                        placeholder="Enter task (e.g., 'open calculator')",
+                        lines=3
+                    )
 
             share_prompt = gr.Checkbox(
                 label="Share prompt (only!) anonymously",
@@ -193,7 +199,7 @@ def create_agent_tab(app_instance) -> List[gr.components.Component]:
             )
 
     return [
-        task_input, share_prompt, max_steps, max_actions,
+        task_input, refine_prompt_btn, share_prompt, max_steps, max_actions,
         run_button, stop_button, result_output, terminal_output
     ]
 

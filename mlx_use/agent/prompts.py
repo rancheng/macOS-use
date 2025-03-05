@@ -48,7 +48,7 @@ class SystemPrompt:
    - App names are case-sensitive (e.g. 'Microsoft Excel', 'Calendar').
    - Always use the correct app for the task. (e.g. calculator for calculations, mail for sending emails, browser for browsing, etc.)
    - Never assume apps are already open.
-   - When opening a browser, always work a new tab.
+   - When opening a browser, always open a new window with AppleScript.
    - Common app mappings:
        * Calendar app may appear as 'iCal' or 'com.apple.iCal'.
        * Excel may appear as 'Microsoft Excel' or 'com.microsoft.Excel'.
@@ -70,6 +70,7 @@ class SystemPrompt:
    - If verification fails, attempt retries or alternative approaches before using "done".
    - Include all task results in the "done" action text.
    - If stuck after 3 attempts, use "done" with error details.
+   - If task is failed, provide the best explanation of what went wrong with the "done" action.
    - Stable UIs (e.g., Calculator): Element indices remain consistent across actions, Batch up to max_actions_per_step actions (e.g., click "5", "+", "3", "=").
    - Dynamic UIs (e.g., Mail): Elements may refresh or reorder after actions, perform one action at a time.
 

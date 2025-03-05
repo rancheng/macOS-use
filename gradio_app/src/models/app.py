@@ -44,7 +44,8 @@ class MacOSUseGradioApp:
         self.is_running = False
         self.agent = None
         self.current_task = None  # Clear current task reference
-        self.terminal_buffer = []
+        # Don't clear terminal_buffer when stopping the agent
+        # But do clear the log queue
         while not self.log_queue.empty():
             try:
                 self.log_queue.get_nowait()
@@ -86,10 +87,15 @@ class MacOSUseGradioApp:
             if self.current_task and not self.current_task.done():
                 self.current_task.cancel()
                 
+            # Get the current terminal output before cleanup
+            terminal_output = self.get_terminal_output()
+            
+            # Clean up state but don't affect terminal_buffer
             self._cleanup_state()
             
+            # Append message to the existing output instead of replacing it
             return (
-                self.get_terminal_output() + "\nAgent stopped by user",
+                terminal_output + "\nAgent stopped by user",
                 gr.update(interactive=True),
                 gr.update(interactive=False),
                 gr.update(value="")  # Clear result output when stopping
@@ -272,6 +278,9 @@ class MacOSUseGradioApp:
         automation = self.automations[automation_name]
         self._cleanup_state()
         
+        # Clear terminal buffer for new automation
+        self.terminal_buffer = []
+        
         try:
             for i, agent_config in enumerate(automation["agents"]):
                 # Initialize LLM
@@ -353,6 +362,40 @@ class MacOSUseGradioApp:
             )
             self._cleanup_state()
 
+    async def get_llm_response(
+        self,
+        system_message: str,
+        user_message: str,
+        llm_provider: str,
+        llm_model: str
+    ) -> str:
+        """Get a direct response from the LLM model without using the Agent"""
+        try:
+            # Get the API key
+            api_key = self.get_saved_api_key(llm_provider)
+            if not api_key:
+                raise ValueError(f"No API key found for {llm_provider}")
+            
+            # Initialize LLM
+            llm = get_llm(llm_provider, llm_model, api_key)
+            if not llm:
+                raise ValueError(f"Failed to initialize {llm_provider} LLM")
+            
+            # Create the messages
+            from langchain_core.messages import SystemMessage, HumanMessage
+            messages = [
+                SystemMessage(content=system_message),
+                HumanMessage(content=user_message)
+            ]
+            
+            # Get the response
+            response = await llm.ainvoke(messages)
+            return response.content
+            
+        except Exception as e:
+            logging.error(f"Error getting LLM response: {e}")
+            return user_message  # Return the original message if there's an error
+            
     async def run_agent(
         self,
         task: str,
@@ -367,6 +410,9 @@ class MacOSUseGradioApp:
         """Run the agent with the specified configuration"""
         # Clean up any previous state
         self._cleanup_state()
+        
+        # Clear terminal buffer for new task, but only when starting a new task (not when stopping)
+        self.terminal_buffer = []
         
         try:
             # Validate inputs

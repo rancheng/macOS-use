@@ -48,7 +48,7 @@ class Controller:
 				param_model=InputTextAction,
 				requires_mac_builder=True)
 		async def input_text(index: int, text: str, submit: bool, mac_tree_builder: MacUITreeBuilder):
-			logger.info(f'Inputting text {text} into element with index {index}')
+			logger.debug(f'Inputting text {text} into element with index {index}')
 
 			try:
 				if index in mac_tree_builder._element_cache:
@@ -77,7 +77,7 @@ class Controller:
 				param_model=ClickElementAction,
 				  requires_mac_builder=True)
 		async def click_element(index: int, action: str, mac_tree_builder: MacUITreeBuilder):
-			logger.info(f'Clicking element {index}')
+			logger.debug(f'Clicking element {index}')
 
 			try:
 				if index in mac_tree_builder._element_cache:
@@ -114,7 +114,7 @@ class Controller:
 			requires_mac_builder=True
 		)
 		async def right_click_element(index: int, mac_tree_builder: MacUITreeBuilder):
-			logger.info(f'Right clicking element {index}')
+			logger.debug(f'Right clicking element {index}')
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_right_click = mac_tree_builder._element_cache[index]
@@ -143,7 +143,7 @@ class Controller:
 			requires_mac_builder=True
 		)
 		async def scroll_element(index: int, direction: Literal['up', 'down', 'left', 'right'], mac_tree_builder: MacUITreeBuilder):
-			logger.info(f'Scrolling element {index} {direction}')
+			logger.debug(f'Scrolling element {index} {direction}')
 			try:
 				if index in mac_tree_builder._element_cache:
 					element_to_scroll = mac_tree_builder._element_cache[index]
@@ -225,7 +225,7 @@ class Controller:
 			param_model=AppleScriptAction
 		)
 		async def run_apple_script(script: str):
-			logger.info(f'Running AppleScript: {script}')
+			logger.debug(f'Running AppleScript: {script}')
 			
 			# Wrap the original script in error handling and return value logic
 			wrapped_script = f'''

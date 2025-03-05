@@ -1,14 +1,18 @@
 import os
-import sys
+import signal
+import socket
+import asyncio
+import logging
+from typing import Dict, Union, Optional
 
-from pathlib import Path
 import gradio as gr
 
-# Add the parent directory to sys.path to import mlx_use
-sys.path.append(str(Path(__file__).parent.parent))
-
-from src.models.app import MacOSUseGradioApp
-from src.ui.interface import create_agent_tab, create_automations_tab, create_configuration_tab
+from gradio_app.src.models.app import MacOSUseGradioApp
+from gradio_app.src.ui.interface import (
+    create_agent_tab,
+    create_automations_tab,
+    create_configuration_tab
+)
 
 def create_interface(app_instance: MacOSUseGradioApp):
     """Create the Gradio interface with all components."""
@@ -17,7 +21,7 @@ def create_interface(app_instance: MacOSUseGradioApp):
         
         with gr.Tab("Agent"):
             agent_components = create_agent_tab(app_instance)
-            task_input, share_prompt, max_steps, max_actions, \
+            task_input, refine_prompt_btn, share_prompt, max_steps, max_actions, \
             run_button, stop_button, result_output, terminal_output = agent_components
 
         with gr.Tab("Automations"):
@@ -89,6 +93,57 @@ def create_interface(app_instance: MacOSUseGradioApp):
                 task, max_steps, max_actions, llm_provider, llm_model, api_key, share_prompt, share_terminal
             ):
                 yield output
+                
+        # Function to refine user prompt using LLM
+        async def refine_prompt(prompt, llm_provider, llm_model, api_key):
+            """Uses the LLM to refine the user's prompt based on examples."""
+            if not prompt or not prompt.strip():
+                return prompt
+                
+            if not api_key:
+                return prompt
+                
+            # Create a system message that explains what the LLM should do
+            system_message = f"""You are a helpful assistant that refines user prompts for a macOS-use agent.
+The user has provided a prompt: "{prompt}"
+
+Your task is to refine this prompt to make it more specific, clearer, and more likely to succeed when executed on macOS.
+For this purpose the agent can preform the following actions:
+- Open an app
+- Click on an element
+- Type text into a field
+- Create an AppleScript
+          
+GENERAL PRINCIPLES:
+1. Include useful details that make the task clear and executable (e.g Open [app name], click on the [element name])
+2. Don't change the intent of the original prompt!
+3. If the task involves multiple steps, break it down into smaller steps
+4. When prompting for opening an app, ALWAYS prompt with "open 'app name'"
+5. When prompting for opening a browser, prompt with "open a new window"
+6. Dont take the user sequence as granted, decide for yourself what is the best way to accomplish the task
+
+Only return the refined prompt text, nothing else.
+"""
+            
+            # Try to use the agent's API to refine the prompt
+            try:
+                # Use the existing API connection
+                app_instance.save_api_key_to_env(llm_provider, api_key)
+                # Get the response from the LLM
+                refined_prompt = await app_instance.get_llm_response(
+                    system_message=system_message,
+                    user_message=prompt,
+                    llm_provider=llm_provider,
+                    llm_model=llm_model
+                )
+                
+                # Clean up the response - remove any quotes that may be present
+                refined_prompt = refined_prompt.strip('"\'')
+                
+                return refined_prompt
+            except Exception as e:
+                print(f"Error refining prompt: {e}")
+                return prompt  # Return original prompt if there's an error
 
         # Set up event handlers
         add_automation_btn.click(
@@ -149,6 +204,20 @@ def create_interface(app_instance: MacOSUseGradioApp):
                 stop_button,
                 result_output
             ],
+            queue=True,
+            api_name=False
+        )
+        
+        # Add event handler for the refine prompt button
+        refine_prompt_btn.click(
+            fn=refine_prompt,
+            inputs=[
+                task_input,
+                llm_provider,
+                llm_model,
+                api_key
+            ],
+            outputs=[task_input],
             queue=True,
             api_name=False
         )
