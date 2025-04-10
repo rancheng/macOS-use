@@ -168,6 +168,7 @@ class MacOSUseGradioApp:
         # Map provider to environment variable name
         provider_to_env = {
             "OpenAI": "OPENAI_API_KEY",
+            "OpenRouter": "OPENROUTER_API_KEY",
             "Anthropic": "ANTHROPIC_API_KEY",
             "Google": "GEMINI_API_KEY",
             "alibaba": "DEEPSEEK_API_KEY"
@@ -198,21 +199,13 @@ class MacOSUseGradioApp:
             elif line.startswith("✅"):
                 idx = lines.index(line)
                 if idx > 0:
-                    prev_line = lines[idx-1].strip()
-                    if "📄 Result:" in prev_line:
-                        result_text = prev_line.split("📄 Result:", 1)[1].strip()
-                    elif "📝 Result:" in prev_line:
-                        result_text = prev_line.split("📝 Result:", 1)[1].strip()
+                    result_text = lines[idx-1].strip()
         
-        # If no explicit result found but task completed steps
-        if not result_text and "📍 Step" in output:
-            last_eval = None
-            for line in reversed(lines):
-                if "Eval:" in line:
-                    last_eval = line.split("Eval:", 1)[1].strip()
-                    break
-            if last_eval:
-                result_text = f"Last status: {last_eval}"
+        if not result_text:
+            if "✅ Task completed successfully" in output:
+                result_text = "Task completed successfully"
+            else:
+                result_text = "Task execution completed, but no explicit result was returned."
         
         return result_text
 
@@ -220,6 +213,7 @@ class MacOSUseGradioApp:
         """Get saved API key from .env file based on provider"""
         provider_to_env = {
             "OpenAI": "OPENAI_API_KEY",
+            "OpenRouter": "OPENROUTER_API_KEY",
             "Anthropic": "ANTHROPIC_API_KEY",
             "Google": "GEMINI_API_KEY",
             "alibaba": "DEEPSEEK_API_KEY"
@@ -293,7 +287,7 @@ class MacOSUseGradioApp:
                     task=agent_config["prompt"],
                     llm=llm,
                     controller=self.controller,
-                    use_vision=False,
+                    use_vision=llm_provider == "OpenRouter",
                     max_actions_per_step=agent_config["max_actions"]
                 )
                 
@@ -467,7 +461,7 @@ class MacOSUseGradioApp:
                 task=task,
                 llm=llm,
                 controller=self.controller,
-                use_vision=False,
+                use_vision=llm_provider == "OpenRouter",
                 max_actions_per_step=max_actions
             )
             

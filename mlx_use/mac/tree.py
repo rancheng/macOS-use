@@ -17,6 +17,7 @@ import Cocoa
 import objc
 from ApplicationServices import (
 	AXError,
+	AXUIElement,
 	AXUIElementCopyActionNames,
 	AXUIElementCopyAttributeValue,
 	AXUIElementCreateApplication,

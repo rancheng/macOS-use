@@ -79,7 +79,29 @@ async def main():
 	)
   
 	await agent_greeting.run(max_steps=25)
-	task = input("Enter the task: ")
+	
+	task_print="""
+
+Instructions:
+YOU MUST USE IPHONE MIRRORING TO FOR THE FOLLOWING TASKS-
+1. Click iPhone Mirroring in the Dock or open from Applications/Launchpad (requires macOS Sequoia 15+)
+found at: /System/Applications/Utilities/iPhone http://Mirroring.app
+
+HOW TO USE IPHONE MIRRORING:
+- Tap/swipe using mouse/trackpad
+- Type using Mac keyboard
+- Go to Home Screen (Command-1)
+- Open App Switcher (Command-2)
+- Open Spotlight (Command-3)
+- Control audio through Mac
+Note: Camera/mic access not available. Connection pauses after inactivity.
+IMPORTANT: Open Spotlight (Command-3) to search for and open the app you want to use.
+
+TASK:
+
+/n
+"""
+	task = task_print+input("Enter the task you'd like to perform with iPhone Mirroring: ")
   
 	agent_task = Agent(
 		task=task,

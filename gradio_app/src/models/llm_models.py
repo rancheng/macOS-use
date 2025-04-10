@@ -3,10 +3,12 @@ from pydantic import SecretStr
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
+from openai import OpenAI
 
 # LLM model mappings
 LLM_MODELS = {
     "OpenAI": ["gpt-4o", "o3-mini"],
+    "OpenRouter": ["openrouter/quasar-alpha", "openrouter/claude-3-opus-20240229", "openrouter/anthropic.claude-3-haiku:2024-06-18"],
     "Anthropic": ["claude-3-5-sonnet-20240620", "claude-3-7-sonnet-20250219"],
     "Google": ["gemini-1.5-flash-002", "gemini-2.0-flash-exp"],
     "alibaba": ["qwen-2.5-72b-instruct"]
@@ -17,11 +19,21 @@ def get_llm(provider: str, model: str, api_key: str) -> Optional[object]:
     try:
         if provider == "OpenAI":
             return ChatOpenAI(model=model, api_key=SecretStr(api_key))
+        elif provider == "OpenRouter":
+            return ChatOpenAI(
+                model=model,
+                api_key=SecretStr(api_key),
+                base_url="https://openrouter.ai/api/v1",
+                extra_headers={
+                    "HTTP-Referer": "https://github.com/browser-use/macOS-use",
+                    "X-Title": "macOS-use",
+                }
+            )
         elif provider == "Anthropic":
             return ChatAnthropic(model=model, api_key=SecretStr(api_key))
         elif provider == "Google":
             return ChatGoogleGenerativeAI(model=model, api_key=SecretStr(api_key))
         else:
-            raise ValueError(f"Unsupported provider: {provider}")
+            raise ValueError(f"不支持的提供商: {provider}")
     except Exception as e:
-        raise ValueError(f"Failed to initialize {provider} LLM: {str(e)}") 
+        raise ValueError(f"初始化 {provider} LLM 失败: {str(e)}") 

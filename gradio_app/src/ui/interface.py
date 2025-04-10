@@ -259,7 +259,7 @@ def create_automations_tab(app_instance) -> List[gr.components.Component]:
 
 def create_configuration_tab(app_instance) -> List[gr.components.Component]:
     # Get saved provider and model from preferences, or use defaults
-    default_provider = app_instance.preferences.get("llm_provider", "OpenAI")
+    default_provider = app_instance.preferences.get("llm_provider", "OpenRouter")
     
     llm_provider = gr.Dropdown(
         choices=list(app_instance.llm_models.keys()),
